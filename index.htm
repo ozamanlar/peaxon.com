@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PEAXON | Intelligence Beyond Horizons</title>
+    <meta name="description" content="Peaxon develops next-generation AI systems designed to simplify complexity and automate intelligent workflows.">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCBZXNNG2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PJCBZXNNG2');
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS RESET & VARIABLES --- */
+        :root {
+            --bg-color: #050508;
+            --primary-accent: #00f3ff; /* Electric Cyan */
+            --secondary-accent: #bc13fe; /* Neon Purple */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #ffffff;
+            --text-muted: #8f9bb3;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* --- 3D BACKGROUND CONTAINER --- */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0; /* Arkada kalmasını sağlar */
+            pointer-events: none; /* Mouse etkileşimi içeriğe geçsin */
+        }
+
+        /* --- LAYOUT & CONTENT --- */
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, var(--bg-color) 120%);
+        }
+
+        /* HEADER */
+        header {
+            padding: 30px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 4px;
+            color: var(--text-main);
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+        
+        .logo span { color: var(--primary-accent); }
+
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 5px 12px;
+            border: 1px solid var(--primary-accent);
+            color: var(--primary-accent);
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* HERO SECTION */
+        .hero {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            margin-top: -50px; /* Optik dengeleme */
+        }
+
+        .hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* FEATURES GRID (GLASSMORPHISM) */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            padding: 0 20px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 12px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.15);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary-accent);
+        }
+
+        .card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* NEWSLETTER INPUT */
+        .cta-container {
+            display: flex;
+            gap: 10px;
+            max-width: 450px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .cta-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            border-radius: 6px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .cta-input:focus {
+            border-color: var(--secondary-accent);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .cta-btn {
+            padding: 15px 30px;
+            background: var(--primary-accent);
+            color: #000;
+            font-weight: 700;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: var(--secondary-accent);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.3);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .cta-container { flex-direction: column; }
+            .features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <div class="wrapper">
+        <header>
+            <a href="#" class="logo">PEAXON<span>.</span></a>
+            <div class="status-badge">System Initializing</div>
+        </header>
+
+        <section class="hero">
+            <h1>Intelligence,<br>Beyond Horizons.</h1>
+            <p>Peaxon is engineering the next generation of neural AI systems. <br>We simplify complexity through autonomous technology.</p>
+            
+            <div class="cta-container">
+                <input type="email" class="cta-input" placeholder="Enter your email for early access...">
+                <button class="cta-btn">Join Orbit</button>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="card">
+                <div class="card-icon">◈</div>
+                <h3>Neural Automation</h3>
+                <p>Eliminate repetitive workflows with self-learning autonomous agents designed for precision.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">◉</div>
+                <h3>Predictive Core</h3>
+                <p>Transform raw data into strategic foresight using our advanced deep-learning architecture.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">❖</div>
+                <h3>Hyper Scalability</h3>
+                <p>Cloud-native infrastructure that grows with your needs, from startup to enterprise scale.</p>
+            </div>
+        </section>
+
+        <footer>
+            <p>&copy; 2026 Peaxon Technologies. All systems nominal.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // Setup Scene
+        const scene = new THREE.Scene();
+        
+        // Fog for depth (Atmosphere)
+        scene.fog = new THREE.FogExp2(0x050508, 0.002);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); // Alpha true for transparent bg
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // --- CREATE OBJECTS ---
+
+        // 1. The Wireframe Core (Icosahedron)
+        const geometryCore = new THREE.IcosahedronGeometry(10, 1);
+        const materialCore = new THREE.MeshBasicMaterial({ 
+            color: 0x00f3ff, 
+            wireframe: true, 
+            transparent: true, 
+            opacity: 0.3 
+        });
+        const coreSphere = new THREE.Mesh(geometryCore, materialCore);
+        scene.add(coreSphere);
+
+        // 2. The Particle Cloud (Surrounding the core)
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 700;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            // Spread particles in a large area
+            posArray[i] = (Math.random() - 0.5) * 50; 
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const materialParticles = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0xbc13fe, // Purple particles
+            transparent: true,
+            opacity: 0.8,
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, materialParticles);
+        scene.add(particlesMesh);
+
+        // Positioning
+        camera.position.z = 30;
+
+        // Mouse Interaction Variables
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+
+        function animate() {
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Rotate Core
+            coreSphere.rotation.y += 0.002;
+            coreSphere.rotation.x += 0.001;
+            
+            // "Breathing" effect for Core
+            const scale = 1 + Math.sin(elapsedTime) * 0.05;
+            coreSphere.scale.set(scale, scale, scale);
+
+            // Rotate Particles
+            particlesMesh.rotation.y = -elapsedTime * 0.05; // Counter rotation
+            particlesMesh.rotation.x = mouseY * 0.0001;
+
+            // Smooth Mouse Parallax
+            coreSphere.rotation.y += 0.05 * (targetX - coreSphere.rotation.y);
+            coreSphere.rotation.x += 0.05 * (targetY - coreSphere.rotation.x);
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Handle Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
