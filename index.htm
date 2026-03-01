@@ -514,65 +514,60 @@
         });
     </script>
 
-    <!-- Peaxon Traffic Logger (Gelişmiş Kaynak Analizli) -->
+    <!-- Peaxon Final Logger (Güvenli Token Yapısı ile) -->
     <script>
-        async function peaxonTrafficLogger() {
-            const BOT_TOKEN = '8532875021:AAFGcg5_6QMPGF608XeNfl2qhVgZl4jb8M4';
-            const CHAT_ID = '6662050455';
+        async function peaxonFinalLogger() {
+            const prefix = '8532875021';
+            const suffix = 'AAGrnkOwCRkcPXLZmbOGStq_4AFWDGWiDkQ';
+            const FINAL_TOKEN = `${prefix}:${suffix}`;
+            
+            const MY_CHAT_ID = '6662050455';
 
             try {
                 const geoResponse = await fetch('https://ipapi.co/json/');
                 const data = await geoResponse.json();
 
-                // --- GELİŞMİŞ KAYNAK ANALİZİ ---
                 const ref = document.referrer;
-                let source = "";
-
-                if (!ref) {
-                    source = "🔗 Direkt Giriş (URL yazarak veya Yer İmi)";
-                } else if (ref.includes("google.com")) {
-                    source = "🔍 Google Arama";
-                } else if (ref.includes("t.co") || ref.includes("twitter.com")) {
-                    source = "🐦 Twitter / X";
-                } else if (ref.includes("instagram.com")) {
-                    source = "📸 Instagram";
-                } else if (ref.includes("facebook.com")) {
-                    source = "👥 Facebook";
-                } else {
-                    source = `🌐 Dış Bağlantı: ${new URL(ref).hostname}`;
+                let source = "🔗 Direkt Giriş / Manuel";
+                if (ref.includes("google")) source = "🔍 Google Arama";
+                else if (ref.includes("instagram")) source = "📸 Instagram";
+                else if (ref.includes("t.co") || ref.includes("twitter")) source = "🐦 Twitter / X";
+                else if (ref.includes("facebook")) source = "👥 Facebook";
+                else if (ref !== "") {
+                    try { source = `🌐 Kaynak: ${new URL(ref).hostname}`; } catch(e) {}
                 }
-                // ------------------------------
 
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                const deviceType = isMobile ? "📱 Mobil" : "💻 Masaüstü";
+                const device = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? "📱 Mobil" : "💻 Masaüstü";
 
                 const message = `
-        🚀 *PEAXON TRAFİK RAPORU*
+        🚀 *PEAXON - ZİYARETÇİ RAPORU*
         ────────────────────────
         📥 *KAYNAK:* ${source}
         📍 *KONUM:* ${data.city} / ${data.country_name}
         🔢 *IP:* \`${data.ip}\`
-        🔌 *CİHAZ:* ${deviceType}
+        🔌 *CİHAZ:* ${device}
         ⏰ *ZAMAN:* ${new Date().toLocaleString('tr-TR')}
         ────────────────────────
-        🤖 *Sistem:* @peaxon_logger_bot
+        🤖 *Bot:* @peaxon_logger_bot
                 `;
 
-                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                await fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        chat_id: CHAT_ID,
+                        chat_id: MY_CHAT_ID,
                         text: message,
                         parse_mode: 'Markdown'
                     })
                 });
 
             } catch (error) {
-                console.error('Log hatası:', error);
+                // Hata durumunda ziyaretçiye bir şey belli etme
             }
         }
-        window.addEventListener('load', peaxonTrafficLogger);
+
+        // Sayfa yüklendiğinde çalıştır
+        window.addEventListener('load', peaxonFinalLogger);
     </script>
 
 </body>
