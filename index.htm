@@ -320,16 +320,135 @@
         renderer.setPixelRatio(window.devicePixelRatio);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Core
-        const geometryCore = new THREE.IcosahedronGeometry(10, 1);
-        const materialCore = new THREE.MeshBasicMaterial({ 
+        // 6 Ayaklı Sürüngen (Hexapod) - Büyük ve Anlaşılabilir
+        const hexapod = new THREE.Group();
+        
+        // Sürüngen Gövdesi (Ana vücut)
+        const bodyGeometry = new THREE.BoxGeometry(8, 4, 5);
+        const bodyMaterial = new THREE.MeshBasicMaterial({ 
             color: 0x00f3ff, 
-            wireframe: true, 
+            wireframe: false, 
             transparent: true, 
-            opacity: 0.2 
+            opacity: 0.25 
         });
-        const coreSphere = new THREE.Mesh(geometryCore, materialCore);
-        scene.add(coreSphere);
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        const bodyWire = new THREE.Mesh(bodyGeometry, new THREE.MeshBasicMaterial({
+            color: 0x00f3ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        }));
+        hexapod.add(body);
+        hexapod.add(bodyWire);
+        
+        // Sürüngen Başı (daha büyük)
+        const headGeometry = new THREE.SphereGeometry(1.8, 12, 12);
+        const headMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x00f3ff, 
+            wireframe: false, 
+            transparent: true, 
+            opacity: 0.3 
+        });
+        const head = new THREE.Mesh(headGeometry, headMaterial);
+        const headWire = new THREE.Mesh(headGeometry, new THREE.MeshBasicMaterial({
+            color: 0x00f3ff,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.7
+        }));
+        head.position.z = 4.5;
+        headWire.position.z = 4.5;
+        hexapod.add(head);
+        hexapod.add(headWire);
+        
+        // Göz detayları (baş içinde)
+        const eyeGeometry = new THREE.SphereGeometry(0.4, 8, 8);
+        const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0xbc13fe });
+        const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
+        eye1.position.set(-0.6, 0.5, 5.2);
+        eye2.position.set(0.6, 0.5, 5.2);
+        hexapod.add(eye1);
+        hexapod.add(eye2);
+        
+        // 6 Ayak Konumları (sol: -y, sağ: +y; ön: +z, arka: -z)
+        const legPositions = [
+            // Ön sol
+            { x: -2, y: -2.5, z: 1.5 },
+            // Ön sağ
+            { x: -2, y: 2.5, z: 1.5 },
+            // Orta sol
+            { x: 0, y: -2.5, z: 0 },
+            // Orta sağ
+            { x: 0, y: 2.5, z: 0 },
+            // Arka sol
+            { x: 2, y: -2.5, z: -1.5 },
+            // Arka sağ
+            { x: 2, y: 2.5, z: -1.5 }
+        ];
+        
+        const legs = [];
+        legPositions.forEach((pos, index) => {
+            const legGroup = new THREE.Group();
+            
+            // Üst bacak (daha kalın ve uzun)
+            const upperLegGeometry = new THREE.BoxGeometry(0.6, 0.6, 3);
+            const legMaterialFill = new THREE.MeshBasicMaterial({ 
+                color: 0xbc13fe, 
+                wireframe: false, 
+                transparent: true, 
+                opacity: 0.25 
+            });
+            const upperLeg = new THREE.Mesh(upperLegGeometry, legMaterialFill);
+            const upperLegWire = new THREE.Mesh(upperLegGeometry, new THREE.MeshBasicMaterial({
+                color: 0xbc13fe,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            }));
+            upperLeg.position.z = -1.8;
+            upperLegWire.position.z = -1.8;
+            legGroup.add(upperLeg);
+            legGroup.add(upperLegWire);
+            
+            // Alt bacak (daha kalın ve uzun)
+            const lowerLegGeometry = new THREE.BoxGeometry(0.5, 0.5, 3);
+            const lowerLeg = new THREE.Mesh(lowerLegGeometry, legMaterialFill);
+            const lowerLegWire = new THREE.Mesh(lowerLegGeometry, new THREE.MeshBasicMaterial({
+                color: 0xbc13fe,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.6
+            }));
+            lowerLeg.position.z = -3;
+            lowerLegWire.position.z = -3;
+            upperLeg.add(lowerLeg);
+            upperLeg.add(lowerLegWire);
+            
+            // Ayak (uç noktası)
+            const footGeometry = new THREE.SphereGeometry(0.35, 8, 8);
+            const footMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xbc13fe, 
+                wireframe: false, 
+                transparent: true, 
+                opacity: 0.35 
+            });
+            const foot = new THREE.Mesh(footGeometry, footMaterial);
+            foot.position.z = -3.5;
+            lowerLeg.add(foot);
+            
+            legGroup.position.set(pos.x, pos.y, pos.z);
+            hexapod.add(legGroup);
+            legs.push({
+                group: legGroup,
+                upperLeg: upperLeg,
+                lowerLeg: lowerLeg,
+                baseAngle: index % 2 === 0 ? 0 : Math.PI,
+                offset: (index % 3) * (Math.PI * 2 / 3)
+            });
+        });
+        
+        scene.add(hexapod);
 
         // Particles
         const particlesGeometry = new THREE.BufferGeometry();
@@ -365,12 +484,20 @@
         function animate() {
             const elapsedTime = clock.getElapsedTime();
 
-            coreSphere.rotation.y += 0.003;
-            coreSphere.rotation.x += 0.002;
+            // Sürüngen Animasyonu
+            hexapod.rotation.y += 0.003;
+            hexapod.rotation.x += 0.002;
             
-            // Mouse Parallax Effect
-            coreSphere.position.x += (mouseX - coreSphere.position.x) * 0.05;
-            coreSphere.position.y += (-mouseY - coreSphere.position.y) * 0.05;
+            // Mouse Parallax Effect - Sürüngen fare hareketi takip ediyor
+            hexapod.position.x += (mouseX - hexapod.position.x) * 0.05;
+            hexapod.position.y += (-mouseY - hexapod.position.y) * 0.05;
+
+            // Ayakları hareket ettir (adım animasyonu)
+            legs.forEach((leg, index) => {
+                const walkCycle = Math.sin(elapsedTime * 3 + leg.offset) * 0.5;
+                leg.upperLeg.rotation.x = walkCycle * 0.6;
+                leg.lowerLeg.rotation.x = walkCycle * 0.8;
+            });
 
             particlesMesh.rotation.y = -elapsedTime * 0.05;
 
