@@ -22,15 +22,15 @@
         /* --- CSS RESET & VARIABLES --- */
         :root {
             --bg-color: #050508;
-            --primary-accent: #00f3ff; /* Electric Cyan */
-            --secondary-accent: #bc13fe; /* Neon Purple */
+            --primary-accent: #00f3ff;
+            --secondary-accent: #bc13fe;
             --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
             --text-muted: #8f9bb3;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; } /* Özel imleç için standart imleci gizledik */
 
         body {
             background-color: var(--bg-color);
@@ -41,7 +41,21 @@
             width: 100%;
         }
 
-        /* --- 3D BACKGROUND CONTAINER --- */
+        /* --- CUSTOM CURSOR --- */
+        #custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease-out, background 0.3s ease, width 0.3s ease, height 0.3s ease;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 15px var(--primary-accent);
+        }
+
+        /* --- 3D BACKGROUND --- */
         #canvas-container {
             position: fixed;
             top: 0;
@@ -52,7 +66,6 @@
             pointer-events: none;
         }
 
-        /* --- LAYOUT & CONTENT --- */
         .wrapper {
             position: relative;
             z-index: 10;
@@ -68,6 +81,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            opacity: 0; /* Animasyon için başlangıç */
+            transform: translateY(-20px);
         }
 
         .logo {
@@ -82,7 +97,6 @@
         
         .logo span { color: var(--primary-accent); }
 
-        /* Instagram Link Stili */
         .instagram-link {
             text-decoration: none;
             transition: all 0.3s ease;
@@ -118,12 +132,11 @@
             font-size: clamp(2.2rem, 8vw, 5rem);
             font-weight: 700;
             line-height: 1.1;
-            background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #fff;
             margin-bottom: 25px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            min-height: 1.2em; /* Zıplamayı önlemek için */
         }
 
         .hero p {
@@ -132,6 +145,8 @@
             max-width: 600px;
             line-height: 1.6;
             margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(20px);
         }
 
         /* FEATURES GRID */
@@ -148,17 +163,18 @@
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             padding: 30px;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            transform: translateY(30px);
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.02);
             border-color: var(--primary-accent);
-            box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.15);
+            box-shadow: 0 10px 30px -10px rgba(0, 243, 255, 0.3);
         }
 
         .card-icon {
@@ -174,19 +190,14 @@
             color: #fff;
         }
 
-        .card p {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* NEWSLETTER INPUT */
+        /* NEWSLETTER */
         .cta-container {
             display: flex;
             gap: 10px;
             max-width: 500px;
             width: 100%;
             margin-bottom: 20px;
+            opacity: 0;
         }
 
         .cta-input {
@@ -197,7 +208,6 @@
             color: #fff;
             border-radius: 6px;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1rem;
             outline: none;
         }
 
@@ -209,12 +219,9 @@
             font-weight: 700;
             border: none;
             border-radius: 6px;
-            cursor: pointer;
             font-family: 'Orbitron', sans-serif;
             text-transform: uppercase;
-            font-size: 0.85rem;
             transition: 0.3s;
-            white-space: nowrap;
         }
 
         .cta-btn:hover {
@@ -223,79 +230,36 @@
             box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
         }
 
-        .cta-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* FOOTER */
         footer {
             text-align: center;
             padding: 40px 20px;
-            font-size: 0.9rem;
             color: var(--text-muted);
             border-top: 1px solid rgba(255,255,255,0.05);
-            line-height: 1.8;
         }
 
-        footer strong {
-            color: var(--primary-accent);
-            letter-spacing: 1px;
-        }
-        
-        footer a {
-            color: var(--primary-accent);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        footer a:hover {
-            color: var(--secondary-accent);
-            text-decoration: underline;
+        /* Reveal Animation Classes */
+        .reveal-active {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+            transition: all 0.8s ease-out;
         }
 
-        /* RESPONSIVE FIXES */
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 20px 5%;
-            }
-
-            .hero {
-                padding-top: 40px;
-            }
-
-            .hero h1 { 
-                font-size: 2.2rem; 
-                margin-top: 20px;
-            }
-
-            .cta-container { 
-                flex-direction: column; 
-                padding: 0 10px;
-            }
-
-            .cta-btn {
-                width: 100%;
-            }
-
-            .features { 
-                grid-template-columns: 1fr; 
-                margin-bottom: 40px;
-            }
+            #custom-cursor { display: none; }
+            * { cursor: auto !important; }
+            .cta-container { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
+    <div id="custom-cursor"></div>
     <div id="canvas-container"></div>
 
     <div class="wrapper">
-        <header>
+        <header id="header">
             <a href="#" class="logo">PEAXON<span>.</span></a>
-            <!-- Instagram Logolu Link -->
-            <a href="https://www.instagram.com/m.e.yiter/" target="_blank" class="instagram-link">
+            <a href="https://www.instagram.com/m.e.yiter/" target="_blank" class="instagram-link hover-target">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;">
                     <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -306,28 +270,27 @@
         </header>
 
         <section class="hero">
-            <h1>Intelligence,<br>Beyond Horizons.</h1>
-            <p>Peaxon is engineering the next generation of neural AI systems. <br>We simplify complexity through autonomous technology.</p>
+            <h1 id="typewriter"></h1>
+            <p id="hero-p">Peaxon is engineering the next generation of neural AI systems. We simplify complexity through autonomous technology.</p>
             
-            <!-- Güncellenmiş Email Alanı -->
-            <div class="cta-container">
+            <div class="cta-container" id="cta">
                 <input type="email" id="userEmail" class="cta-input" placeholder="Enter your email for early access...">
-                <button class="cta-btn" onclick="sendLeadToTelegram()">Join Orbit</button>
+                <button class="cta-btn hover-target" onclick="sendLeadToTelegram()">Join Orbit</button>
             </div>
         </section>
 
         <section class="features">
-            <div class="card">
+            <div class="card reveal" onclick="trackFeature('Neural Automation')">
                 <div class="card-icon">◈</div>
                 <h3>Neural Automation</h3>
                 <p>Eliminate repetitive workflows with self-learning autonomous agents designed for precision.</p>
             </div>
-            <div class="card">
+            <div class="card reveal" onclick="trackFeature('Predictive Core')">
                 <div class="card-icon">◉</div>
                 <h3>Predictive Core</h3>
                 <p>Transform raw data into strategic foresight using our advanced deep-learning architecture.</p>
             </div>
-            <div class="card">
+            <div class="card reveal" onclick="trackFeature('Hyper Scalability')">
                 <div class="card-icon">❖</div>
                 <h3>Hyper Scalability</h3>
                 <p>Cloud-native infrastructure that grows with your needs, from startup to enterprise scale.</p>
@@ -336,343 +299,163 @@
 
         <footer>
             <p>&copy; 2026 Peaxon Technologies. All systems nominal.</p>
-            <!-- Linkli YİTER -->
-            <p>Design and development powered by <a href="https://www.instagram.com/m.e.yiter/" target="_blank"><strong>YİTER</strong></a></p>
+            <p>Design and development powered by <a href="https://www.instagram.com/m.e.yiter/" target="_blank" class="hover-target"><strong>YİTER</strong></a></p>
         </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x050508, 0.002);
-
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
-
-        // 6 Ayaklı Sürüngen (Hexapod) - Büyük ve Anlaşılabilir
-        const hexapod = new THREE.Group();
-        
-        // Sürüngen Gövdesi (Ana vücut)
-        const bodyGeometry = new THREE.BoxGeometry(8, 4, 5);
-        const bodyMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x00f3ff, 
-            wireframe: false, 
-            transparent: true, 
-            opacity: 0.25 
+        // 1. Custom Cursor Logic
+        const cursor = document.getElementById('custom-cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
-        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-        const bodyWire = new THREE.Mesh(bodyGeometry, new THREE.MeshBasicMaterial({
-            color: 0x00f3ff,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.6
-        }));
-        hexapod.add(body);
-        hexapod.add(bodyWire);
-        
-        // Sürüngen Başı (daha büyük)
-        const headGeometry = new THREE.SphereGeometry(1.8, 12, 12);
-        const headMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x00f3ff, 
-            wireframe: false, 
-            transparent: true, 
-            opacity: 0.3 
-        });
-        const head = new THREE.Mesh(headGeometry, headMaterial);
-        const headWire = new THREE.Mesh(headGeometry, new THREE.MeshBasicMaterial({
-            color: 0x00f3ff,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.7
-        }));
-        head.position.z = 4.5;
-        headWire.position.z = 4.5;
-        hexapod.add(head);
-        hexapod.add(headWire);
-        
-        // Göz detayları (baş içinde)
-        const eyeGeometry = new THREE.SphereGeometry(0.4, 8, 8);
-        const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0xbc13fe });
-        const eye1 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-        const eye2 = new THREE.Mesh(eyeGeometry, eyeMaterial);
-        eye1.position.set(-0.6, 0.5, 5.2);
-        eye2.position.set(0.6, 0.5, 5.2);
-        hexapod.add(eye1);
-        hexapod.add(eye2);
-        
-        // 6 Ayak Konumları (sol: -y, sağ: +y; ön: +z, arka: -z)
-        const legPositions = [
-            // Ön sol
-            { x: -2, y: -2.5, z: 1.5 },
-            // Ön sağ
-            { x: -2, y: 2.5, z: 1.5 },
-            // Orta sol
-            { x: 0, y: -2.5, z: 0 },
-            // Orta sağ
-            { x: 0, y: 2.5, z: 0 },
-            // Arka sol
-            { x: 2, y: -2.5, z: -1.5 },
-            // Arka sağ
-            { x: 2, y: 2.5, z: -1.5 }
-        ];
-        
-        const legs = [];
-        legPositions.forEach((pos, index) => {
-            const legGroup = new THREE.Group();
-            
-            // Üst bacak (daha kalın ve uzun)
-            const upperLegGeometry = new THREE.BoxGeometry(0.6, 0.6, 3);
-            const legMaterialFill = new THREE.MeshBasicMaterial({ 
-                color: 0xbc13fe, 
-                wireframe: false, 
-                transparent: true, 
-                opacity: 0.25 
+
+        document.querySelectorAll('.hover-target, .card, .cta-btn, .cta-input').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                cursor.style.background = 'rgba(0, 243, 255, 0.1)';
             });
-            const upperLeg = new THREE.Mesh(upperLegGeometry, legMaterialFill);
-            const upperLegWire = new THREE.Mesh(upperLegGeometry, new THREE.MeshBasicMaterial({
-                color: 0xbc13fe,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.6
-            }));
-            upperLeg.position.z = -1.8;
-            upperLegWire.position.z = -1.8;
-            legGroup.add(upperLeg);
-            legGroup.add(upperLegWire);
-            
-            // Alt bacak (daha kalın ve uzun)
-            const lowerLegGeometry = new THREE.BoxGeometry(0.5, 0.5, 3);
-            const lowerLeg = new THREE.Mesh(lowerLegGeometry, legMaterialFill);
-            const lowerLegWire = new THREE.Mesh(lowerLegGeometry, new THREE.MeshBasicMaterial({
-                color: 0xbc13fe,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.6
-            }));
-            lowerLeg.position.z = -3;
-            lowerLegWire.position.z = -3;
-            upperLeg.add(lowerLeg);
-            upperLeg.add(lowerLegWire);
-            
-            // Ayak (uç noktası)
-            const footGeometry = new THREE.SphereGeometry(0.35, 8, 8);
-            const footMaterial = new THREE.MeshBasicMaterial({ 
-                color: 0xbc13fe, 
-                wireframe: false, 
-                transparent: true, 
-                opacity: 0.35 
-            });
-            const foot = new THREE.Mesh(footGeometry, footMaterial);
-            foot.position.z = -3.5;
-            lowerLeg.add(foot);
-            
-            legGroup.position.set(pos.x, pos.y, pos.z);
-            hexapod.add(legGroup);
-            legs.push({
-                group: legGroup,
-                upperLeg: upperLeg,
-                lowerLeg: lowerLeg,
-                baseAngle: index % 2 === 0 ? 0 : Math.PI,
-                offset: (index % 3) * (Math.PI * 2 / 3)
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursor.style.background = 'transparent';
             });
         });
-        
-        scene.add(hexapod);
 
-        // Particles
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 800;
-        const posArray = new Float32Array(particlesCount * 3);
-
-        for(let i = 0; i < particlesCount * 3; i++) {
-            posArray[i] = (Math.random() - 0.5) * 60; 
+        // 2. Typewriter Effect
+        const txt = "Intelligence,\nBeyond Horizons.";
+        let i = 0;
+        function typeWriter() {
+            if (i < txt.length) {
+                document.getElementById("typewriter").innerHTML += txt.charAt(i) === "\n" ? "<br>" : txt.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            } else {
+                // Slogan bitince alt metni ve CTA'yı göster
+                document.getElementById('hero-p').classList.add('reveal-active');
+                document.getElementById('cta').classList.add('reveal-active');
+                document.getElementById('header').classList.add('reveal-active');
+            }
         }
 
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const materialParticles = new THREE.PointsMaterial({
-            size: 0.12,
-            color: 0xbc13fe,
-            transparent: true,
-            opacity: 0.6,
-        });
-        const particlesMesh = new THREE.Points(particlesGeometry, materialParticles);
-        scene.add(particlesMesh);
+        // 3. Scroll Reveal Logic
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                }
+            });
+        }, { threshold: 0.1 });
 
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        window.onload = () => {
+            typeWriter();
+        };
+    </script>
+
+    <script>
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050508, 0.002);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const hexapod = new THREE.Group();
+        const bodyGeom = new THREE.BoxGeometry(8, 4, 5);
+        const bodyMat = new THREE.MeshBasicMaterial({ color: 0x00f3ff, wireframe: true, transparent: true, opacity: 0.4 });
+        hexapod.add(new THREE.Mesh(bodyGeom, bodyMat));
+        
+        // Ekstra Partikül Halesi
+        const ringGeom = new THREE.TorusGeometry(12, 0.05, 16, 100);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0xbc13fe, transparent: true, opacity: 0.3 });
+        const ring = new THREE.Mesh(ringGeom, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        hexapod.add(ring);
+
+        scene.add(hexapod);
         camera.position.z = 35;
 
-        let mouseX = 0;
-        let mouseY = 0;
-
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX - window.innerWidth / 2) / 100;
-            mouseY = (event.clientY - window.innerHeight / 2) / 100;
-        });
-
-        const clock = new THREE.Clock();
-
         function animate() {
-            const elapsedTime = clock.getElapsedTime();
-
-            // Sürüngen Animasyonu
-            hexapod.rotation.y += 0.003;
-            hexapod.rotation.x += 0.002;
-            
-            // Mouse Parallax Effect - Sürüngen fare hareketi takip ediyor
-            hexapod.position.x += (mouseX - hexapod.position.x) * 0.05;
-            hexapod.position.y += (-mouseY - hexapod.position.y) * 0.05;
-
-            // Ayakları hareket ettir (adım animasyonu)
-            legs.forEach((leg, index) => {
-                const walkCycle = Math.sin(elapsedTime * 3 + leg.offset) * 0.5;
-                leg.upperLeg.rotation.x = walkCycle * 0.6;
-                leg.lowerLeg.rotation.x = walkCycle * 0.8;
-            });
-
-            particlesMesh.rotation.y = -elapsedTime * 0.05;
-
+            hexapod.rotation.y += 0.002;
+            ring.rotation.z += 0.01;
             renderer.render(scene, camera);
             requestAnimationFrame(animate);
         }
-
         animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
     </script>
 
-    <!-- Peaxon Final Logger (Güvenli Token Yapısı ile) -->
     <script>
-        async function peaxonFinalLogger() {
-            const prefix = '8532875021';
-            const suffix = 'AAGrnkOwCRkcPXLZmbOGStq_4AFWDGWiDkQ';
-            const FINAL_TOKEN = `${prefix}:${suffix}`;
-            
-            const MY_CHAT_ID = '6662050455';
+        const prefix = '8532875021';
+        const suffix = 'AAGrnkOwCRkcPXLZmbOGStq_4AFWDGWiDkQ';
+        const TOKEN = `${prefix}:${suffix}`;
+        const CHAT_ID = '6662050455';
+        const startTime = Date.now();
 
+        // Fonksiyon: Telegram'a Sessizce Veri Gönder
+        async function reportToBot(text) {
             try {
-                const geoResponse = await fetch('https://ipapi.co/json/');
-                const data = await geoResponse.json();
-
-                const ref = document.referrer;
-                let source = "🔗 Direkt Giriş / Manuel";
-                if (ref.includes("google")) source = "🔍 Google Arama";
-                else if (ref.includes("instagram")) source = "📸 Instagram";
-                else if (ref.includes("t.co") || ref.includes("twitter")) source = "🐦 Twitter / X";
-                else if (ref.includes("facebook")) source = "👥 Facebook";
-                else if (ref !== "") {
-                    try { source = `🌐 Kaynak: ${new URL(ref).hostname}`; } catch(e) {}
-                }
-
-                const device = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? "📱 Mobil" : "💻 Masaüstü";
-
-                const message = `
-        🚀 *PEAXON - ZİYARETÇİ RAPORU*
-        ────────────────────────
-        📥 *KAYNAK:* ${source}
-        📍 *KONUM:* ${data.city} / ${data.country_name}
-        🔢 *IP:* \`${data.ip}\`
-        🔌 *CİHAZ:* ${device}
-        ⏰ *ZAMAN:* ${new Date().toLocaleString('tr-TR')}
-        ────────────────────────
-        🤖 *Bot:* @peaxon_logger_bot
-                `;
-
-                await fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
+                fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: MY_CHAT_ID,
-                        text: message,
-                        parse_mode: 'Markdown'
-                    })
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
                 });
-
-            } catch (error) {
-                // Hata durumunda ziyaretçiye bir şey belli etme
-            }
+            } catch(e) {}
         }
 
-        // Sayfa yüklendiğinde çalıştır
-        window.addEventListener('load', peaxonFinalLogger);
-    </script>
+        // Özellik Tıklama Takibi
+        function trackFeature(featureName) {
+            reportToBot(`🎯 *Etkileşim:* Ziyaretçi "${featureName}" özelliğini tıkladı/inceledi.`);
+        }
 
-    <!-- Email Gönderme Fonksiyonu -->
-    <script>
+        // Sayfadan Ayrılma Takibi (Süreyi hesaplar)
+        window.addEventListener('beforeunload', () => {
+            const endTime = Date.now();
+            const duration = Math.floor((endTime - startTime) / 1000);
+            const mins = Math.floor(duration / 60);
+            const secs = duration % 60;
+            const timeStr = mins > 0 ? `${mins} dk ${secs} sn` : `${secs} sn`;
+            
+            // Beacon API kullanarak tarayıcı kapanırken veriyi gönderir
+            const msg = `🚪 *Ayrılış:* Ziyaretçi sayfadan ayrıldı.\n⏱ *Süresi:* ${timeStr}`;
+            navigator.sendBeacon(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
+        });
+
+        // İlk Giriş Raporu (Mevcut kodun entegrasyonu)
+        async function peaxonFinalLogger() {
+            try {
+                const geo = await (await fetch('https://ipapi.co/json/')).json();
+                const device = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? "📱 Mobil" : "💻 Masaüstü";
+                const msg = `🚀 *PEAXON - YENİ GİRİŞ*\n──────────────────\n📍 *Konum:* ${geo.city} / ${geo.country_name}\n🔌 *Cihaz:* ${device}\n🌐 *IP:* \`${geo.ip}\`\n──────────────────`;
+                reportToBot(msg);
+            } catch (e) {}
+        }
+        peaxonFinalLogger();
+
+        // Lead Kaydı
         async function sendLeadToTelegram() {
-            const emailInput = document.getElementById('userEmail');
-            const userEmail = emailInput.value;
+            const email = document.getElementById('userEmail').value;
             const btn = document.querySelector('.cta-btn');
-
-            if (!userEmail || !userEmail.includes('@')) {
-                alert('Please enter a valid email address.');
-                return;
-            }
+            if (!email || !email.includes('@')) { alert('Valid email required.'); return; }
 
             btn.disabled = true;
             btn.innerText = "SENDING...";
-
-            const prefix = '8532875021';
-            const suffix = 'AAGrnkOwCRkcPXLZmbOGStq_4AFWDGWiDkQ';
-            const TOKEN = `${prefix}:${suffix}`;
-            const CHAT_ID = '6662050455';
-
-            // Mevcut konum verilerini de eklemek için (isteğe bağlı)
-            let locationInfo = "";
-            try {
-                const geoResponse = await fetch('https://ipapi.co/json/');
-                const geoData = await geoResponse.json();
-                locationInfo = `📍 *Konum:* ${geoData.city} / ${geoData.country_name}\n`;
-            } catch(e) { 
-                locationInfo = "📍 *Konum:* Alınamadı\n"; 
-            }
-
-            const text = `
-🔥 *YENİ ERKEN ERİŞİM KAYDI!*
-────────────────────────
-📧 *E-posta:* ${userEmail}
-${locationInfo}⏰ *Zaman:* ${new Date().toLocaleString('tr-TR')}
-────────────────────────
-🚀 _Peaxon Orbit'e yeni bir yolcu katıldı!_
-            `;
-
-            try {
-                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHAT_ID,
-                        text: text,
-                        parse_mode: 'Markdown'
-                    })
-                });
-
-                btn.innerText = "JOINED!";
-                btn.style.background = "#bc13fe";
-                emailInput.value = "";
-                alert('Welcome to Orbit! Your request has been sent.');
-                
-                // 2 saniye sonra butonu eski haline döndür
-                setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerText = "JOIN ORBIT";
-                    btn.style.background = "";
-                }, 2000);
-                
-            } catch (error) {
+            
+            const msg = `🔥 *YENİ KAYIT!*\n📧 *E-posta:* ${email}\n🚀 _Peaxon Orbit'e katıldı!_`;
+            await reportToBot(msg);
+            
+            btn.innerText = "JOINED!";
+            btn.style.background = "#bc13fe";
+            document.getElementById('userEmail').value = "";
+            setTimeout(() => {
                 btn.disabled = false;
                 btn.innerText = "JOIN ORBIT";
-                alert('An error occurred. Please try again.');
-            }
+                btn.style.background = "";
+            }, 3000);
         }
     </script>
-
 </body>
 </html>
