@@ -133,9 +133,59 @@
             opacity: 0.7;
         }
 
+        .legal-footer {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 20px;
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .legal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            opacity: 0.6;
+            font-size: 0.8rem;
+            line-height: 1.6;
+        }
+
+        .legal-grid h4 {
+            color: var(--primary-accent);
+            font-family: 'Orbitron';
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
+
+        .legal-status {
+            text-align: center;
+            margin-top: 30px;
+            font-family: 'Orbitron';
+            font-size: 0.6rem;
+            color: var(--secondary-accent);
+            letter-spacing: 2px;
+        }
+
+        .ai-pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary-accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--secondary-accent);
+            animation: ai-glow 2s infinite ease-in-out;
+        }
+        
+        @keyframes ai-glow {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
             .map-frame { height: 400px; }
             .header-nav { flex-wrap: wrap; gap: 10px; }
+            .legal-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -167,11 +217,103 @@
             </div>
         </div>
 
+        <!-- Intelligence Feed Panel -->
+        <div class="monitor-card" style="margin-top: 20px; border-color: var(--secondary-accent);">
+            <div class="monitor-label" style="background: rgba(188, 19, 254, 0.2); color: var(--secondary-accent); border-left-color: var(--secondary-accent);">
+                OFFICIAL NAVIGATIONAL ALERTS (NAVTEX / NOTAM)
+            </div>
+            
+            <div style="padding: 40px 20px 20px 20px; background: rgba(10, 10, 15, 0.9);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                    
+                    <div style="border: 1px solid rgba(188, 19, 254, 0.2); padding: 15px; border-radius: 4px;">
+                        <h5 style="font-family: 'Orbitron'; color: var(--secondary-accent); margin: 0 0 10px 0; font-size: 0.8rem;">[ NOTAM FEED ]</h5>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #ccc; line-height: 1.6;">
+                            <li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
+                                <span style="color: #ff3e3e;">●</span> <strong>ME-REGION:</strong> GPS jamming reported in Eastern Mediterranean. Exercise caution.
+                            </li>
+                            <li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
+                                <span style="color: var(--primary-accent);">●</span> <strong>IRAQ-AIRSPACE:</strong> New restricted zones active near western borders.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div style="border: 1px solid rgba(188, 19, 254, 0.2); padding: 15px; border-radius: 4px;">
+                        <h5 style="font-family: 'Orbitron'; color: var(--secondary-accent); margin: 0 0 10px 0; font-size: 0.8rem;">[ NAVTEX FEED ]</h5>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #ccc; line-height: 1.6;">
+                            <li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
+                                <span style="color: #ff3e3e;">●</span> <strong>STRAIT OF HORMUZ:</strong> Increased naval patrols. Commercial vessels advised to maintain AIS.
+                            </li>
+                            <li style="margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
+                                <span style="color: var(--primary-accent);">●</span> <strong>CYPRUS-OFFSHORE:</strong> Scheduled naval exercises until 04 MAR 2026.
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+                
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dotted rgba(188, 19, 254, 0.3); display: flex; justify-content: space-between; align-items: center;">
+                    
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="ai-pulse"></div>
+                        <span style="font-family: 'Rajdhani'; font-size: 0.75rem; color: #888; letter-spacing: 1px; font-style: italic;">
+                            "AI-Powered analysis of global advisories. Reports are synthesized by Peaxon Neural Core."
+                        </span>
+                    </div>
+
+                    <div style="font-family: 'Orbitron'; font-size: 0.6rem; color: var(--secondary-accent); opacity: 0.8;">
+                        ANALYSIS ID: PX-77-DELTA
+                    </div>
+                </div>
+                
+                <div style="margin-top: 15px; text-align: right;">
+                    <span class="blink" style="font-family: 'Orbitron'; font-size: 0.6rem; color: var(--secondary-accent);">
+                        SYNCHRONIZING WITH GLOBAL ADVISORIES...
+                    </span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <footer style="text-align: center; padding: 40px; font-family: 'Orbitron'; font-size: 0.6rem; color: #333; letter-spacing: 2px;">
         PROCESSED BY PEAXON NEURAL CORE // NO DATA FILTERED
     </footer>
+
+    <!-- Legal Footer -->
+    <div class="legal-footer">
+        <div class="legal-grid">
+            
+            <div>
+                <h4>DATA SOURCES</h4>
+                <p>
+                    Visualized data is aggregated from public Open Source Intelligence (OSINT) providers including <strong>ADS-B Exchange</strong> and <strong>MarineTraffic/VesselFinder</strong>. 
+                    Peaxon does not host, broadcast, or transmit raw signal data.
+                </p>
+            </div>
+
+            <div>
+                <h4>LEGAL DISCLAIMER</h4>
+                <p>
+                    This interface is provided for educational and analytical purposes only. All information is sourced from publicly available, unclassified civilian transponder signals. 
+                    Peaxon explicitly disclaims any responsibility for the accuracy, completeness, or real-time reliability of third-party data.
+                </p>
+            </div>
+
+            <div>
+                <h4>COMPLIANCE</h4>
+                <p>
+                    Operational Security (OPSEC) protocols are respected; no classified or restricted military frequencies are monitored or displayed. 
+                    Usage of this dashboard implies agreement to international laws regarding public signal monitoring.
+                </p>
+            </div>
+
+        </div>
+        
+        <div class="legal-status">
+            PEAXON STRATEGIC UNIT // SYSTEM STATUS: NOMINAL
+        </div>
+    </div>
 
     <script>
         async function peaxonHorizonLogger() {
