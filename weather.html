@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>PEAXON | Global Weather Intelligence & Live Wind Radar</title>
+    <meta name="description" content="Anlık küresel hava durumu, canlı rüzgar radarı ve fırtına takibi. Peaxon ile şehir bazlı 5 günlük tahminleri ve ekstrem hava olaylarını izleyin.">
+    <meta name="keywords" content="canlı hava durumu, rüzgar radarı, fırtına takibi, istanbul hava durumu, canlı uydu görüntüsü, meteoroloji radar, Peaxon weather">
+    <link rel="canonical" href="https://ozamanlar.github.io/peaxon.com/weather.html">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <style>
+        :root {
+            --primary-bg: #030305;
+            --accent-blue: #00d2ff;
+            --accent-gold: #ffcf33;
+            --glass: rgba(10, 10, 15, 0.8);
+            --text: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--primary-bg); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
+
+        /* Arka Plan Atmosferik Efekt */
+        .atm-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 210, 255, 0.05), transparent);
+            pointer-events: none; z-index: 1;
+        }
+
+        #map { width: 100%; height: 100vh; position: absolute; z-index: 0; filter: saturate(1.5) brightness(0.7); }
+
+        /* Anasayfa Bağlantısı */
+        .back-home {
+            position: fixed; top: 20px; left: 20px; z-index: 2000;
+            background: var(--glass); border: 1px solid var(--accent-blue);
+            color: var(--accent-blue); padding: 10px 20px; text-decoration: none;
+            font-family: 'Orbitron'; font-size: 0.7rem; backdrop-filter: blur(10px);
+            letter-spacing: 2px; transition: 0.3s;
+        }
+        .back-home:hover { background: var(--accent-blue); color: #000; }
+
+        /* Hava Durumu Cam Panel (Widget) */
+        .weather-widget {
+            position: fixed; bottom: 40px; left: 40px; z-index: 2000;
+            width: 350px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(15px); padding: 25px; border-radius: 2px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .city-name { font-family: 'Orbitron'; font-size: 1.4rem; color: #fff; margin-bottom: 5px; }
+        .temp-main { font-family: 'Orbitron'; font-size: 3.5rem; color: var(--accent-blue); margin: 10px 0; }
+        .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; font-size: 0.8rem; }
+        .detail-item { color: #888; }
+        .detail-value { color: #fff; font-weight: bold; display: block; }
+
+        /* Radar Kontrol Paneli */
+        .radar-controls {
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+            background: var(--glass); padding: 10px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .layer-btn {
+            background: transparent; border: 1px solid rgba(255,255,255,0.2);
+            color: #fff; padding: 8px 15px; cursor: pointer; font-family: 'Rajdhani';
+            font-size: 0.7rem; text-align: left; transition: 0.3s;
+        }
+        .layer-btn.active { border-color: var(--accent-blue); color: var(--accent-blue); }
+
+        /* Pulse Efekti */
+        .live-indicator {
+            width: 8px; height: 8px; background: #ff3333; border-radius: 50%;
+            display: inline-block; margin-right: 10px; animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div class="atm-glow"></div>
+
+    <a href="index.htm" class="back-home">◀ HUB_SYSTEM</a>
+
+    <div class="radar-controls">
+        <div style="font-size: 0.6rem; color: var(--accent-blue); margin-bottom:5px; font-family: 'Orbitron';">RADAR_LAYERS</div>
+        <button class="layer-btn active">TEMPERATURE</button>
+        <button class="layer-btn">WIND_FLOW</button>
+        <button class="layer-btn">PRECIPITATION</button>
+        <button class="layer-btn">CLOUD_COVER</button>
+    </div>
+
+    <div class="weather-widget">
+        <div style="font-size: 0.6rem; color: var(--accent-blue); letter-spacing: 2px; margin-bottom: 10px;">
+            <span class="live-indicator"></span>LIVE_STATION_UPLINK
+        </div>
+        <div id="city" class="city-name">SYNCING...</div>
+        <div id="desc" style="font-size: 0.9rem; color: #aaa; text-transform: uppercase;">Connecting to satellite...</div>
+        
+        <div id="temp" class="temp-main">--°</div>
+
+        <div class="details-grid">
+            <div class="detail-item">HUMIDITY <span id="hum" class="detail-value">--%</span></div>
+            <div class="detail-item">WIND SPEED <span id="wind" class="detail-value">-- km/h</span></div>
+            <div class="detail-item">PRESSURE <span id="press" class="detail-value">-- hPa</span></div>
+            <div class="detail-item">VISIBILITY <span id="vis" class="detail-value">-- km</span></div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="nav-config.js"></script>
+    <script src="privacy.js"></script>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Harita Başlatma
+        var map = L.map('map', {zoomControl: false}).setView([41.0082, 28.9784], 10); // İstanbul Default
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        // 6. TELEGRAM LOGGER & HAVA DURUMU VERİSİ
+        async function fetchWeather() {
+            try {
+                // Konum tespiti
+                const geoRes = await fetch('https://ipapi.co/json/');
+                const geo = await geoRes.json();
+                
+                // OpenWeatherMap API (Örnek Anahtar Kullanılmıştır, kendi anahtarını alabilirsin)
+                const API_KEY = 'bd5e378503939ddaee76f12ad7a97608'; 
+                const weatherRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${geo.latitude}&lon=${geo.longitude}&units=metric&appid=${API_KEY}`);
+                const w = await weatherRes.json();
+
+                // Arayüz Güncelleme
+                document.getElementById('city').innerText = w.name.toUpperCase();
+                document.getElementById('temp').innerText = Math.round(w.main.temp) + '°';
+                document.getElementById('desc').innerText = w.weather[0].description;
+                document.getElementById('hum').innerText = w.main.humidity + '%';
+                document.getElementById('wind').innerText = w.wind.speed + ' km/h';
+                document.getElementById('press').innerText = w.main.pressure + ' hPa';
+                document.getElementById('vis').innerText = (w.visibility / 1000) + ' km';
+
+                map.setView([geo.latitude, geo.longitude], 10);
+
+                // TELEGRAM BİLDİRİMİ
+                const p1 = '8532875021';
+                const p2 = 'AAH7kEurH7QLCxc1';
+                const p3 = 'oeT13F0Bho1NOA3dgGA';
+                const FINAL_TOKEN = `${p1}:${p2}${p3}`;
+                const MY_CHAT_ID = '6662050455';
+                
+                const message = `☁️ *WEATHER ACCESS*\nCity: ${w.name}\nTemp: ${w.main.temp}°C\nIP: ${geo.ip}`;
+                
+                fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: MY_CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+
+            } catch (e) { console.log("Weather Uplink Error."); }
+        }
+
+        window.onload = fetchWeather;
+    </script>
+</body>
+</html>

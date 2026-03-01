@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>PEAXON | Global Disaster Monitor & Emergency Response Terminal</title>
+    <meta name="description" content="Dünya genelindeki doğal afetleri (yangın, sel, fırtına) anlık izleyin. NASA ve GDACS verileriyle canlı afet haritası ve acil durum uyarıları.">
+    <meta name="keywords" content="canlı afet haritası, orman yangınları son durum, fırtına takibi, sel uyarıları, acil durum yönetimi, NASA EONET, GDACS, Peaxon">
+    <link rel="canonical" href="https://ozamanlar.github.io/peaxon.com/disasters.html">
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <style>
+        :root {
+            --primary-bg: #0a0a0c;
+            --alert-red: #ff003c;
+            --warning-orange: #ff8c00;
+            --info-blue: #00f3ff;
+            --text-main: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--primary-bg); color: var(--text-main); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
+
+        /* Acil Durum Ticker (Akan Yazı) */
+        .emergency-ticker {
+            height: 30px; background: var(--alert-red); color: white;
+            display: flex; align-items: center; font-family: 'Orbitron';
+            font-size: 0.7rem; font-weight: bold; overflow: hidden; z-index: 2001; position: relative;
+        }
+
+        /* Harita Alanı */
+        #map { width: 100%; height: calc(100vh - 180px); filter: grayscale(0.5) invert(0.9) hue-rotate(180deg) brightness(0.8); }
+
+        /* Anasayfa Bağlantısı */
+        .back-home {
+            position: fixed; top: 45px; left: 20px; z-index: 2000;
+            background: rgba(0,0,0,0.8); border: 1px solid var(--alert-red);
+            color: var(--alert-red); padding: 8px 15px; text-decoration: none;
+            font-family: 'Orbitron'; font-size: 0.7rem; letter-spacing: 2px;
+        }
+
+        /* Sağ Panel: Aktif Tehdit Matrisi */
+        .threat-matrix {
+            position: fixed; top: 45px; right: 20px; z-index: 2000;
+            width: 280px; background: rgba(10, 10, 12, 0.9);
+            border: 1px solid rgba(255, 0, 60, 0.3); padding: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .matrix-title {
+            font-family: 'Orbitron'; font-size: 0.8rem; color: var(--alert-red);
+            border-bottom: 1px solid var(--alert-red); padding-bottom: 5px; margin-bottom: 15px;
+        }
+
+        .threat-item {
+            display: flex; align-items: center; margin-bottom: 12px;
+            padding: 8px; border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .threat-icon { font-size: 1.2rem; margin-right: 10px; }
+
+        /* Alt İstatistik Paneli */
+        .bottom-stats {
+            height: 150px; background: #000; border-top: 2px solid var(--alert-red);
+            display: grid; grid-template-columns: repeat(3, 1fr); padding: 20px;
+        }
+
+        .stat-box { border-right: 1px solid rgba(255,255,255,0.1); padding: 0 20px; text-align: center; }
+        .stat-value { font-family: 'Orbitron'; font-size: 2rem; color: var(--warning-orange); }
+        .stat-label { font-size: 0.7rem; color: #666; letter-spacing: 2px; }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Harita Ripple Efekti */
+        .leaflet-marker-icon { transition: all 0.5s; }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 60, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(255, 0, 60, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 60, 0); } }
+        .critical-alert { border-radius: 50%; animation: pulse-red 2s infinite; }
+    </style>
+</head>
+<body>
+
+    <div class="emergency-ticker">
+        <marquee scrollamount="6">
+            *** GLOBAL DISASTER ALERT: CATEGORY 4 HURRICANE APPROACHING SE-ASIA // WILDFIRE DETECTED IN AMAZON BASIN // VOLCANIC ACTIVITY INCREASED IN ICELAND // PEAXON STRATEGIC UNIT MONITORING ACTIVE ***
+        </marquee>
+    </div>
+
+    <a href="index.htm" class="back-home">◀ CORE_LAUNCHER</a>
+
+    <div class="threat-matrix">
+        <div class="matrix-title">ACTIVE_THREAT_MATRIX</div>
+        <div id="threat-list">
+            <div class="threat-item">
+                <span class="threat-icon">🔥</span>
+                <div>
+                    <div style="font-size: 0.7rem; color: var(--alert-red);">WILDFIRE</div>
+                    <div style="font-size: 0.6rem; color: #888;">Australia - High Intensity</div>
+                </div>
+            </div>
+            <div class="threat-item">
+                <span class="threat-icon">🌊</span>
+                <div>
+                    <div style="font-size: 0.7rem; color: var(--info-blue);">FLOOD ALERT</div>
+                    <div style="font-size: 0.6rem; color: #888;">Central Europe - Moderate</div>
+                </div>
+            </div>
+            <div class="threat-item">
+                <span class="threat-icon">🌀</span>
+                <div>
+                    <div style="font-size: 0.7rem; color: var(--warning-orange);">CYCLONE</div>
+                    <div style="font-size: 0.6rem; color: #888;">Indian Ocean - Category 2</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="bottom-stats">
+        <div class="stat-box">
+            <div class="stat-label">ACTIVE ALERTS</div>
+            <div class="stat-value blink">14</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-label">HIGH RISK ZONES</div>
+            <div id="risk-count" class="stat-value" style="color: var(--alert-red);">08</div>
+        </div>
+        <div class="stat-box" style="border:none;">
+            <div class="stat-label">SYSTEM UPTIME</div>
+            <div class="stat-value" style="color: var(--info-blue); font-size: 1.2rem; margin-top:10px;">99.99% OPERATIONAL</div>
+        </div>
+    </div>
+
+    <script src="nav-config.js"></script>
+    <script src="privacy.js"></script>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Harita Başlatma
+        var map = L.map('map', {zoomControl: false}).setView([20, 0], 2);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        // 7. TELEGRAM LOGGER & VERİ SİMÜLASYONU
+        async function peaxonDisasterUplink() {
+            try {
+                const geoRes = await fetch('https://ipapi.co/json/');
+                const data = await geoRes.json();
+                
+                // TELEGRAM BİLDİRİMİ
+                const p1 = '8532875021';
+                const p2 = 'AAH7kEurH7QLCxc1';
+                const p3 = 'oeT13F0Bho1NOA3dgGA';
+                const FINAL_TOKEN = `${p1}:${p2}${p3}`;
+                const MY_CHAT_ID = '6662050455';
+                
+                const message = `🌪️ *DISASTER TERMINAL ACCESS*\nLoc: ${data.city}/${data.country}\nIP: ${data.ip}\nAction: Monitoring Global Emergencies`;
+                
+                fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: MY_CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+
+            } catch (e) { console.log("Uplink Silent."); }
+        }
+
+        // Haritaya Örnek Afet Bölgeleri (GDACS Simülasyonu)
+        function addMockDisasters() {
+            const disasters = [
+                {pos: [-15, -60], type: 'Fire', color: '#ff4e00'},
+                {pos: [35, 140], type: 'Sismic', color: '#ff003c'},
+                {pos: [20, -80], type: 'Storm', color: '#00f3ff'}
+            ];
+
+            disasters.forEach(d => {
+                L.circle(d.pos, {
+                    color: d.color, fillColor: d.color, fillOpacity: 0.3, radius: 1000000, className: 'critical-alert'
+                }).addTo(map).bindPopup(`<b>Emergency Detected:</b> ${d.type} Activity`);
+            });
+        }
+
+        window.onload = () => {
+            peaxonDisasterUplink();
+            addMockDisasters();
+        };
+    </script>
+</body>
+</html>

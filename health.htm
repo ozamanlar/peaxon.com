@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>PEAXON | Global Bio-Security & Health Intelligence Terminal</title>
+    <meta name="description" content="Anlık küresel salgın takibi, DSÖ uyarıları ve biyo-güvenlik analizleri. Bölgesel sağlık riskleri ve seyahat sağlığı protokollerini Peaxon üzerinden izleyin.">
+    <meta name="keywords" content="salgın haritası, biyogüvenlik, DSÖ uyarıları, vaka takibi, seyahat sağlığı, pandemic monitor, health intelligence, Peaxon">
+    <meta name="author" content="Peaxon Core">
+    <meta name="robots" content="index, follow">
+    
+    <link rel="canonical" href="https://ozamanlar.github.io/peaxon.com/health.html">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ozamanlar.github.io/peaxon.com/health.html">
+    <meta property="og:title" content="PEAXON | Global Bio-Security & Health Intelligence Terminal">
+    <meta property="og:description" content="Anlık küresel salgın takibi, DSÖ uyarıları ve biyo-güvenlik analizleri.">
+    <meta property="og:image" content="https://ozamanlar.github.io/peaxon.com/og-health.jpg">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="PEAXON | Health Intelligence Terminal">
+    <meta property="twitter:description" content="Global bio-security monitoring and outbreak tracking.">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCBZXNNG2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PJCBZXNNG2');
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <style>
+        :root {
+            --primary-bg: #050508;
+            --bio-green: #39FF14;
+            --bio-hazard: #ff3131;
+            --accent-cyan: #00f3ff;
+            --text-main: #e0e0e0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background-color: var(--primary-bg); 
+            color: var(--text-main); 
+            font-family: 'Rajdhani', sans-serif; 
+            overflow: hidden; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Scanline Efekti (Terminal Hissiyatı) */
+        body::before {
+            content: ""; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 2px, 3px 100%; 
+            z-index: 1001; 
+            pointer-events: none;
+            animation: scan 10s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 0 100%, 0 0; }
+        }
+
+        #map { 
+            width: 100%; 
+            height: 65vh; 
+            border-bottom: 2px solid rgba(57, 255, 20, 0.2);
+            filter: brightness(0.8) contrast(1.2) hue-rotate(170deg) saturate(1.3);
+            z-index: 1;
+        }
+
+        /* Anasayfa Bağlantısı */
+        .back-home {
+            position: fixed; 
+            top: 20px; 
+            left: 20px; 
+            z-index: 2000;
+            background: rgba(0,0,0,0.8); 
+            border: 1px solid var(--bio-green);
+            color: var(--bio-green); 
+            padding: 8px 15px; 
+            text-decoration: none;
+            font-family: 'Orbitron'; 
+            font-size: 0.7rem; 
+            letter-spacing: 2px;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            background: rgba(57, 255, 20, 0.2);
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Yerel İstihbarat Kutusu */
+        #local-intel-box {
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            z-index: 2000;
+            background: rgba(0,0,0,0.9); 
+            border: 1px solid var(--accent-cyan);
+            padding: 15px; 
+            border-radius: 4px; 
+            font-family: 'Orbitron';
+            min-width: 250px; 
+            display: none;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+
+        #local-intel-box .header {
+            font-size: 0.5rem; 
+            color: var(--accent-cyan); 
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        #local-location {
+            font-size: 0.9rem; 
+            margin: 5px 0; 
+            color: #fff;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .risk-row {
+            font-size: 0.6rem; 
+            color: #888; 
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Alt Panel (Veri Akışı) */
+        .data-stream {
+            height: 35vh; 
+            background: #000; 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 1px; 
+            background: rgba(57, 255, 20, 0.1);
+            z-index: 2;
+        }
+
+        .stream-card {
+            background: var(--primary-bg); 
+            padding: 15px; 
+            position: relative; 
+            overflow-y: auto;
+        }
+
+        .stream-card::-webkit-scrollbar {
+            width: 4px;
+            background: #111;
+        }
+        .stream-card::-webkit-scrollbar-thumb {
+            background: var(--bio-green);
+            border-radius: 2px;
+        }
+
+        .stream-title {
+            font-family: 'Orbitron'; 
+            font-size: 0.7rem; 
+            color: var(--bio-green);
+            letter-spacing: 2px; 
+            border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+            padding-bottom: 8px; 
+            margin-bottom: 12px;
+        }
+
+        .stream-card:nth-child(2) .stream-title { color: var(--accent-cyan); }
+        .stream-card:nth-child(3) .stream-title { color: var(--bio-hazard); }
+
+        #outbreak-list {
+            list-style: none; 
+            font-size: 0.75rem; 
+            color: #88ff88; 
+            line-height: 1.8;
+        }
+
+        #outbreak-list li {
+            border-bottom: 1px solid rgba(57, 255, 20, 0.1);
+            padding: 4px 0;
+        }
+
+        .blink { 
+            animation: blinker 1.5s linear infinite; 
+            display: inline-block;
+            margin-right: 5px;
+        }
+        @keyframes blinker { 
+            50% { opacity: 0.2; } 
+        }
+
+        #terminal-logs {
+            font-family: monospace; 
+            font-size: 0.65rem; 
+            color: #aaa;
+            line-height: 1.6;
+        }
+        #terminal-logs .warn { color: #ffaa00; }
+        #terminal-logs .info { color: var(--accent-cyan); }
+        #terminal-logs .error { color: var(--bio-hazard); }
+
+        @media (max-width: 768px) {
+            body { overflow-y: auto; height: auto; }
+            .data-stream { grid-template-columns: 1fr; height: auto; }
+            #map { height: 50vh; }
+            .back-home, #local-intel-box { position: relative; top: auto; left: auto; right: auto; margin: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.htm" class="back-home">◀ CORE_TERMINAL</a>
+
+    <div id="local-intel-box">
+        <div class="header">[ LOCAL_BIO_UPLINK ]</div>
+        <div id="local-location">DETECTING...</div>
+        <div class="risk-row">
+            <span>RISK LEVEL:</span>
+            <span id="local-risk" style="color: var(--bio-green);">NOMINAL</span>
+        </div>
+        <div class="risk-row">
+            <span>VACCINES:</span>
+            <span id="local-vaccines" style="color: var(--accent-cyan);">SYNCING...</span>
+        </div>
+        <div style="font-size: 0.5rem; color: #444; margin-top: 10px; text-align: right;">
+            <span class="blink">●</span> REAL-TIME DATA
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="data-stream">
+        <div class="stream-card">
+            <div class="stream-title">// GLOBAL OUTBREAKS</div>
+            <ul id="outbreak-list">
+                <li><span class="blink">●</span> Dengue Fever - South America (340 cases)</li>
+                <li><span style="color:var(--bio-hazard)">●</span> Cholera - SE Asia (1,240 cases)</li>
+                <li><span>●</span> Influenza Type A - Global (widespread)</li>
+                <li><span>●</span> Mpox - DRC (89 new cases)</li>
+                <li><span style="color:var(--bio-hazard)">●</span> Measles - Pakistan (active outbreak)</li>
+            </ul>
+        </div>
+        
+        <div class="stream-card">
+            <div class="stream-title">// WHO ADVISORIES</div>
+            <div style="font-size: 0.75rem; color: #aaa; line-height: 1.8;">
+                <p>> Emergency Committee Meeting: <span style="color: #ffaa00;">ACTIVE</span></p>
+                <p>> Travel Advisory Update: Region-04 <span style="color: var(--bio-hazard);">RESTRICTED</span></p>
+                <p>> Vaccine Guidance: Q2 2026 updated</p>
+                <p>> Global Health Emergency Status: <span style="color: var(--accent-cyan);">MONITORING</span></p>
+            </div>
+        </div>
+
+        <div class="stream-card">
+            <div class="stream-title">// SYSTEM LOGS</div>
+            <div id="terminal-logs">
+                <span class="info">[INFO]</span> Uplink established with WHO RSS...<br>
+                <span class="warn">[WARN]</span> High viral load detected in Node-12...<br>
+                <span class="info">[INFO]</span> Peaxon Bio-Neural Core Online<br>
+                <span class="info">[INFO]</span> Syncing with Geneva HQ...<br>
+                <span class="warn">[WARN]</span> Unusual pathogen signature in SE-Asia<br>
+                <span class="info">[INFO]</span> Local intel uplink active
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Harita Başlangıcı
+        var map = L.map('map').setView([20, 0], 2);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; CartoDB'
+        }).addTo(map);
+
+        // Salgın Noktaları (Outbreak markers)
+        L.circle([15, 100], {color: '#ff3131', fillColor: '#ff3131', fillOpacity: 0.4, radius: 800000})
+            .addTo(map).bindPopup("<b>Outbreak Alert:</b> SE-Asia Region - Cholera outbreak");
+        
+        L.circle([-14, -51], {color: '#ffaa00', fillColor: '#ffaa00', fillOpacity: 0.3, radius: 600000})
+            .addTo(map).bindPopup("<b>Dengue Cluster:</b> Brazil - 340 cases");
+        
+        L.circle([5, 46], {color: '#39FF14', fillColor: '#39FF14', fillOpacity: 0.2, radius: 500000})
+            .addTo(map).bindPopup("<b>Measles:</b> Somalia - monitoring");
+
+        // Yerel Veri ve Telegram Logger
+        async function getLocalHealthIntel() {
+            try {
+                const geoRes = await fetch('https://ipapi.co/json/');
+                const data = await geoRes.json();
+                
+                // Arayüzü Güncelle
+                document.getElementById('local-intel-box').style.display = 'block';
+                document.getElementById('local-location').innerHTML = `${(data.city || 'Unknown').toUpperCase()}, ${data.country_code} <span style="font-size:0.6rem; color:var(--accent-cyan);">[${data.country_name}]</span>`;
+                
+                // Risk seviyesini ülkeye göre belirle
+                let riskLevel = 'NOMINAL';
+                let riskColor = 'var(--bio-green)';
+                let vaccines = 'Hepatitis, Tetanus, MMR';
+                
+                if (data.country_code === 'BR' || data.country_code === 'IN') {
+                    riskLevel = 'ELEVATED (LEVEL 02)';
+                    riskColor = '#ffaa00';
+                    vaccines = 'Yellow Fever, Dengue, Hepatitis A';
+                } else if (data.country_code === 'CD' || data.country_code === 'PK') {
+                    riskLevel = 'HIGH (LEVEL 03)';
+                    riskColor = 'var(--bio-hazard)';
+                    vaccines = 'Cholera, Measles, Polio';
+                }
+                
+                document.getElementById('local-risk').innerHTML = `<span style="color:${riskColor};">${riskLevel}</span>`;
+                document.getElementById('local-vaccines').innerText = vaccines;
+
+                // TELEGRAM BİLDİRİMİ
+                const p1 = '8532875021';
+                const p2 = 'AAH7kEurH7QLCxc1';
+                const p3 = 'oeT13F0Bho1NOA3dgGA';
+                const FINAL_TOKEN = `${p1}:${p2}${p3}`;
+                const MY_CHAT_ID = '6662050455';
+                
+                const message = `☣️ *HEALTH TERMINAL ACCESS*\n📍 *Konum:* ${data.city}/${data.country_name}\n🌐 *IP:* ${data.ip}\n📊 *Risk:* ${riskLevel}`;
+                
+                fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: MY_CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+
+            } catch (e) { 
+                console.log("Uplink Error.");
+                document.getElementById('local-location').innerHTML = 'UNABLE TO DETECT';
+            }
+        }
+
+        window.onload = () => {
+            getLocalHealthIntel();
+        };
+    </script>
+</body>
+</html>

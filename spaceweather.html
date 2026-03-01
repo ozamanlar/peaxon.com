@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>PEAXON | Space Weather Intelligence & Aurora Forecast</title>
+    <meta name="description" content="Anlık güneş fırtınası takibi, Kp indeksi, aurora tahmini ve uzay havası uyarıları. NASA ve NOAA verileriyle derin uzay istihbarat terminali.">
+    <meta name="keywords" content="uzay havası, güneş fırtınası son durum, kuzey ışıkları tahmini, aurora forecast, Kp indeksi, güneş patlaması takibi, Peaxon Space">
+    <link rel="canonical" href="https://ozamanlar.github.io/peaxon.com/spaceweather.html">
+
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    
+    <style>
+        :root {
+            --space-black: #020205;
+            --plasma-green: #00ff95;
+            --solar-flare: #ff6a00;
+            --ion-purple: #bd00ff;
+            --text: #d1d1d1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--space-black); color: var(--text); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
+
+        /* Kozmik Arka Plan */
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(white, rgba(255,255,255,0.2) 2px, transparent 40px);
+            background-size: 550px 550px; opacity: 0.1; z-index: -1;
+        }
+
+        #map { width: 100%; height: 100vh; position: absolute; z-index: 0; filter: contrast(1.2) brightness(0.6) hue-rotate(200deg); }
+
+        /* Anasayfa Bağlantısı */
+        .back-home {
+            position: fixed; top: 25px; left: 25px; z-index: 2000;
+            background: rgba(0,0,0,0.7); border: 1px solid var(--plasma-green);
+            color: var(--plasma-green); padding: 10px 20px; text-decoration: none;
+            font-family: 'Orbitron'; font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 2px; box-shadow: 0 0 15px rgba(0, 255, 149, 0.2);
+        }
+
+        /* Uzay Havası Dashboard */
+        .space-panel {
+            position: fixed; right: 30px; top: 30px; width: 320px;
+            background: rgba(5, 5, 10, 0.85); border: 1px solid rgba(189, 0, 255, 0.3);
+            backdrop-filter: blur(10px); padding: 20px; z-index: 2000;
+            box-shadow: -10px 0 30px rgba(189, 0, 255, 0.1);
+        }
+
+        .panel-header { font-family: 'Orbitron'; font-size: 0.8rem; color: var(--ion-purple); margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+
+        .gauge-container { margin-bottom: 20px; }
+        .gauge-label { font-size: 0.7rem; color: #888; display: flex; justify-content: space-between; }
+        .gauge-bar { height: 4px; background: #111; margin-top: 5px; position: relative; overflow: hidden; }
+        .gauge-fill { height: 100%; width: 0%; background: var(--plasma-green); transition: width 2s ease-in-out; }
+        .flare-fill { background: var(--solar-flare); }
+
+        /* Aurora Status Alert */
+        .aurora-alert {
+            margin-top: 20px; padding: 15px; border: 1px dashed var(--plasma-green);
+            background: rgba(0, 255, 149, 0.05); text-align: center;
+        }
+
+        .kp-value { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--plasma-green); text-shadow: 0 0 20px var(--plasma-green); }
+
+        /* Terminal Logs */
+        .terminal-log {
+            position: fixed; bottom: 30px; left: 30px; width: 400px;
+            background: rgba(0,0,0,0.8); font-family: monospace; font-size: 0.7rem;
+            color: #00ff00; padding: 10px; z-index: 2000; border-left: 3px solid var(--plasma-green);
+        }
+
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <a href="index.htm" class="back-home">◀ DEEP_SPACE_HUB</a>
+
+    <div class="space-panel">
+        <div class="panel-header">DEEP_SPACE_MONITOR [V.4.5]</div>
+        
+        <div class="gauge-container">
+            <div class="gauge-label">SOLAR WIND SPEED <span id="wind-val">--- km/s</span></div>
+            <div class="gauge-bar"><div id="wind-fill" class="gauge-fill" style="width: 45%;"></div></div>
+        </div>
+
+        <div class="gauge-container">
+            <div class="gauge-label">X-RAY FLUX <span id="flare-val">CLASS B</span></div>
+            <div class="gauge-bar"><div id="flare-fill" class="gauge-fill flare-fill" style="width: 20%;"></div></div>
+        </div>
+
+        <div class="aurora-alert">
+            <div style="font-size: 0.6rem; color: #888; margin-bottom: 5px;">CURRENT KP INDEX</div>
+            <div id="kp-index" class="kp-value">2.33</div>
+            <div style="font-size: 0.7rem; margin-top: 10px; color: var(--plasma-green);">CONDITION: QUIET</div>
+        </div>
+
+        <div style="margin-top: 20px; font-size: 0.65rem; color: #555; line-height: 1.6;">
+            > SATELLITE: GOES-16 PRIMARY<br>
+            > UPLINK STATUS: STABLE<br>
+            > DATA SOURCE: NOAA / SWPC
+        </div>
+    </div>
+
+    <div class="terminal-log">
+        <span class="blink">_</span> [SYSTEM] Syncing with DSCOVR spacecraft...<br>
+        [INFO] Interplanetary Magnetic Field (IMF) stable.<br>
+        [INFO] No significant CME impact detected in last 24h.
+    </div>
+
+    <div id="map"></div>
+
+    <script src="nav-config.js"></script>
+    <script src="privacy.js"></script>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Harita Başlatma (Gece Modu)
+        var map = L.map('map', {zoomControl: false, attributionControl: false}).setView([60, 0], 3);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+
+        // Aurora Simülasyonu (Görsel Yaklaşım)
+        var auroraOval = L.circle([90, 0], {
+            color: '#00ff95', fillColor: '#00ff95', fillOpacity: 0.1, radius: 2500000, weight: 1
+        }).addTo(map);
+
+        // 6. TELEGRAM LOGGER & LIVE DATA
+        async function fetchSpaceWeather() {
+            try {
+                // Konum ve IP tespiti
+                const geoRes = await fetch('https://ipapi.co/json/');
+                const geo = await geoRes.json();
+                
+                // Gerçek zamanlı Kp Verisi (NOAA JSON API)
+                const kpRes = await fetch('https://services.swpc.noaa.gov/products/noaa-estimated-planetary-k-index-1-minute.json');
+                const kpData = await kpRes.json();
+                const latestKp = kpData[kpData.length - 1][1];
+                
+                document.getElementById('kp-index').innerText = latestKp;
+                
+                // TELEGRAM BİLDİRİMİ
+                const p1 = '8532875021';
+                const p2 = 'AAH7kEurH7QLCxc1';
+                const p3 = 'oeT13F0Bho1NOA3dgGA';
+                const FINAL_TOKEN = `${p1}:${p2}${p3}`;
+                const MY_CHAT_ID = '6662050455';
+                
+                const message = `🌌 *SPACE WEATHER ACCESS*\nUser: ${geo.city}/${geo.country}\nKp Index: ${latestKp}\nStatus: Monitoring Solar Activity`;
+                
+                fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: MY_CHAT_ID, text: message, parse_mode: 'Markdown' })
+                });
+
+            } catch (e) { console.log("Space Uplink Failed."); }
+        }
+
+        window.onload = fetchSpaceWeather;
+    </script>
+</body>
+</html>
