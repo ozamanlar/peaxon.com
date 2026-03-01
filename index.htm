@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PEAXON | Intelligence Beyond Horizons</title>
-    <meta name="description" content="Peaxon develops next-generation AI systems designed to simplify complexity and automate intelligent workflows.">
     
+    <!-- GÜNCELLENMİŞ SEO ETİKETLERİ -->
+    <title>PEAXON | Intelligence Beyond Horizons - AI Systems & Strategic Intelligence</title>
+    <meta name="description" content="Peaxon develops next-generation AI systems and strategic intelligence tools designed to simplify complexity and automate workflows. Access live global surveillance.">
+    <meta name="keywords" content="Peaxon, AI systems, strategic intelligence, global surveillance, automated workflows, tech innovation">
+    <meta name="author" content="Peaxon Core">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://peaxon.com/">
+    
+    <!-- Open Graph (Facebook/LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://peaxon.com/">
+    <meta property="og:title" content="PEAXON | Intelligence Beyond Horizons">
+    <meta property="og:description" content="Next-gen AI systems and strategic monitoring tools.">
+    <meta property="og:image" content="https://peaxon.com/og-image.jpg">
+    
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="PEAXON | AI & Strategy">
+    <meta property="twitter:description" content="Intelligence Beyond Horizons.">
+    
+    <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCBZXNNG2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,6 +34,7 @@
       gtag('config', 'G-PJCBZXNNG2');
     </script>
     
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
@@ -28,9 +49,10 @@
             --glass-border: rgba(255, 255, 255, 0.08);
             --text-main: #ffffff;
             --text-muted: #8f9bb3;
+            --alert-red: #ff3e3e;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; } /* Özel imleç için standart imleci gizledik */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
 
         body {
             background-color: var(--bg-color);
@@ -39,6 +61,11 @@
             overflow-x: hidden;
             min-height: 100vh;
             width: 100%;
+        }
+
+        /* Gizli SEO Başlığı - Google görür, kullanıcı görmez */
+        .seo-title {
+            display: none;
         }
 
         /* --- CUSTOM CURSOR --- */
@@ -75,13 +102,13 @@
             background: radial-gradient(circle at 50% 50%, transparent 0%, var(--bg-color) 120%);
         }
 
-        /* HEADER */
+        /* HEADER - Instagram linki kaldırıldı */
         header {
             padding: 30px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            opacity: 0; /* Animasyon için başlangıç */
+            opacity: 0;
             transform: translateY(-20px);
         }
 
@@ -97,23 +124,62 @@
         
         .logo span { color: var(--primary-accent); }
 
-        .instagram-link {
+        /* UYARI PANELİ */
+        .alert-banner {
+            display: flex;
+            justify-content: center;
+            padding: 15px 20px;
+            background: rgba(255, 62, 62, 0.05);
+            border-bottom: 1px solid rgba(255, 62, 62, 0.3);
+            backdrop-filter: blur(5px);
+            margin-bottom: 20px;
+        }
+        
+        .strategic-link {
             text-decoration: none;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--alert-red);
+            color: var(--alert-red);
             display: flex;
             align-items: center;
-            font-size: 0.7rem;
-            padding: 5px 12px;
-            border: 1px solid var(--primary-accent);
-            color: var(--primary-accent);
-            border-radius: 20px;
-            background: rgba(0, 243, 255, 0.05);
-            white-space: nowrap;
+            gap: 12px;
+            padding: 12px 30px;
+            border-radius: 40px;
+            background: rgba(255, 62, 62, 0.1);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            animation: alert-pulse 2s infinite;
         }
-        .instagram-link:hover {
-            background: rgba(188, 19, 254, 0.2);
-            border-color: var(--secondary-accent);
+        
+        .strategic-link:hover {
+            background: rgba(255, 62, 62, 0.2);
+            box-shadow: 0 0 20px rgba(255, 62, 62, 0.4);
+            transform: scale(1.02);
             color: #fff;
+            border-color: #ff6e6e;
+        }
+        
+        .live-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: var(--alert-red);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes alert-pulse {
+            0% { border-color: var(--alert-red); }
+            50% { border-color: #ff9e9e; }
+            100% { border-color: var(--alert-red); }
         }
 
         /* HERO SECTION */
@@ -124,10 +190,11 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px 60px;
         }
 
-        .hero h1 {
+        /* Kullanıcıya görünen başlık - typewriter ile doldurulacak */
+        .hero h2 {
             font-family: 'Orbitron', sans-serif;
             font-size: clamp(2.2rem, 8vw, 5rem);
             font-weight: 700;
@@ -136,7 +203,7 @@
             margin-bottom: 25px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            min-height: 1.2em; /* Zıplamayı önlemek için */
+            min-height: 1.2em;
         }
 
         .hero p {
@@ -230,11 +297,23 @@
             box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
         }
 
+        /* FOOTER - Instagram linki SADECE burada */
         footer {
             text-align: center;
             padding: 40px 20px;
             color: var(--text-muted);
             border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        footer a {
+            color: var(--primary-accent);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        
+        footer a:hover {
+            color: var(--secondary-accent);
+            text-shadow: 0 0 8px var(--secondary-accent);
         }
 
         /* Reveal Animation Classes */
@@ -248,29 +327,39 @@
             #custom-cursor { display: none; }
             * { cursor: auto !important; }
             .cta-container { flex-direction: column; }
+            .strategic-link { font-size: 0.8rem; padding: 10px 20px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- Gizli SEO Ana Başlığı - Google için -->
+    <h1 class="seo-title">Peaxon Intelligence Beyond Horizons - AI and Strategic Data Systems</h1>
+
     <div id="custom-cursor"></div>
     <div id="canvas-container"></div>
 
     <div class="wrapper">
+        <!-- UYARI PANELİ -->
+        <div class="alert-banner">
+            <a href="horizon.html" class="strategic-link hover-target">
+                <span class="live-dot"></span>
+                LIVE STRATEGIC MONITORING
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 5px;">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- HEADER - Instagram linki KALDIRILDI -->
         <header id="header">
             <a href="#" class="logo">PEAXON<span>.</span></a>
-            <a href="https://www.instagram.com/m.e.yiter/" target="_blank" class="instagram-link hover-target">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;">
-                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-                INSTAGRAM
-            </a>
+            <!-- Instagram linki SADECE footer'da kalacak -->
         </header>
 
         <section class="hero">
-            <h1 id="typewriter"></h1>
+            <!-- Kullanıcıya görünen typewriter başlığı h2 olarak değiştirildi (h1 zaten gizli) -->
+            <h2 id="typewriter"></h2>
             <p id="hero-p">Peaxon is engineering the next generation of neural AI systems. We simplify complexity through autonomous technology.</p>
             
             <div class="cta-container" id="cta">
@@ -297,6 +386,7 @@
             </div>
         </section>
 
+        <!-- FOOTER - Instagram linki SADECE burada -->
         <footer>
             <p>&copy; 2026 Peaxon Technologies. All systems nominal.</p>
             <p>Design and development powered by <a href="https://www.instagram.com/m.e.yiter/" target="_blank" class="hover-target"><strong>YİTER</strong></a></p>
@@ -313,7 +403,7 @@
             cursor.style.top = e.clientY + 'px';
         });
 
-        document.querySelectorAll('.hover-target, .card, .cta-btn, .cta-input').forEach(el => {
+        document.querySelectorAll('.hover-target, .card, .cta-btn, .cta-input, .strategic-link').forEach(el => {
             el.addEventListener('mouseenter', () => {
                 cursor.style.transform = 'translate(-50%, -50%) scale(2.5)';
                 cursor.style.background = 'rgba(0, 243, 255, 0.1)';
@@ -424,7 +514,7 @@
             navigator.sendBeacon(`https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}`);
         });
 
-        // İlk Giriş Raporu (Mevcut kodun entegrasyonu)
+        // İlk Giriş Raporu
         async function peaxonFinalLogger() {
             try {
                 const geo = await (await fetch('https://ipapi.co/json/')).json();
