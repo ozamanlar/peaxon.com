@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCBZXNNG2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PJCBZXNNG2');
+    </script>
+    
+    <title>PEAXON HORIZON | Live Strategic Monitoring & Intelligence</title>
+    <meta name="description" content="Real-time aerial and maritime surveillance unit. Monitor global strategic movements with Peaxon Horizon's unfiltered ADS-B and AIS data feeds.">
+    <meta name="keywords" content="live radar, global flight tracking, maritime surveillance, Middle East tension, strategic monitoring, OSINT tool">
+    <meta name="author" content="Peaxon Core">
+    <meta name="robots" content="index, follow">
+    
+    <link rel="canonical" href="https://peaxon.com/horizon.html">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://peaxon.com/horizon.html">
+    <meta property="og:title" content="PEAXON HORIZON | Live Surveillance">
+    <meta property="og:description" content="Access unfiltered strategic aerial and naval data feeds.">
+    <meta property="og:image" content="https://peaxon.com/og-image-horizon.jpg">
+    
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="PEAXON HORIZON | Live Strategic Monitoring">
+    <meta property="twitter:description" content="Real-time aerial and maritime surveillance data.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050508;
+            --primary-accent: #00f3ff;
+            --secondary-accent: #bc13fe;
+            --glass-border: rgba(0, 243, 255, 0.2);
+        }
+
+        body {
+            margin: 0;
+            background-color: var(--bg-color);
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .header-nav {
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5, 5, 8, 0.9);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .back-link {
+            color: var(--primary-accent);
+            text-decoration: none;
+            font-family: 'Orbitron';
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            border: 1px solid var(--primary-accent);
+            box-shadow: 0 0 10px var(--primary-accent);
+        }
+
+        .status-tag {
+            color: #ff3e3e;
+            font-size: 0.8rem;
+            font-family: 'Orbitron';
+            text-transform: uppercase;
+        }
+
+        .blink { animation: blink-anim 1.5s infinite; }
+        @keyframes blink-anim { 50% { opacity: 0.2; } }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            gap: 25px;
+        }
+
+        .monitor-card {
+            background: #000;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .monitor-label {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: var(--primary-accent);
+            padding: 5px 15px;
+            font-size: 0.7rem;
+            font-family: 'Orbitron';
+            border-left: 3px solid var(--primary-accent);
+            z-index: 10;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 550px;
+            border: none;
+            filter: invert(90%) hue-rotate(180deg) brightness(0.9) contrast(1.1) grayscale(0.2);
+        }
+
+        .data-footer {
+            padding: 10px 20px;
+            background: rgba(0, 243, 255, 0.03);
+            font-family: 'Orbitron';
+            font-size: 0.65rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--primary-accent);
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .map-frame { height: 400px; }
+            .header-nav { flex-wrap: wrap; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <a href="index.htm" class="back-link">/ RE-DIRECT TO CORE</a>
+        <div class="status-tag blink">● Signal Intelligence: Active</div>
+        <div style="font-family: 'Orbitron'; letter-spacing: 3px; font-size: 1rem;">HORIZON UNIT</div>
+    </div>
+
+    <div class="main-container">
+        
+        <div class="monitor-card">
+            <div class="monitor-label">AERIAL MOVEMENT // MIDDLE EAST</div>
+            <iframe src="https://globe.adsbexchange.com/?lat=32.4&lon=44.0&zoom=5&enableLabels" class="map-frame"></iframe>
+            <div class="data-footer">
+                <span>FEED: ADS-B UNFILTERED DATA</span>
+                <span>COORD: 32.4N 44.0E</span>
+            </div>
+        </div>
+
+        <div class="monitor-card">
+            <div class="monitor-label">NAVAL DEPLOYMENT // PERSIAN GULF & MED</div>
+            <iframe src="https://www.marinetraffic.com/en/ais/embed/zoom:5/centerx:50/centery:26/theme:dark" class="map-frame" style="filter: none;"></iframe>
+            <div class="data-footer">
+                <span>FEED: AIS REAL-TIME MARINE</span>
+                <span>TARGET: STRAIT OF HORMUZ</span>
+            </div>
+        </div>
+
+    </div>
+
+    <footer style="text-align: center; padding: 40px; font-family: 'Orbitron'; font-size: 0.6rem; color: #333; letter-spacing: 2px;">
+        PROCESSED BY PEAXON NEURAL CORE // NO DATA FILTERED
+    </footer>
+
+    <!-- Telegram Visitor Report - Strategic Radar Access -->
+    <script>
+        async function peaxonHorizonLogger() {
+            const FINAL_TOKEN = '8532875021:AAGrnkOwCRkcPXLZmbOGStq_4AFWDGWiDkQ';
+            const MY_CHAT_ID = '6662050455';
+
+            try {
+                const geoResponse = await fetch('https://ipapi.co/json/');
+                const data = await geoResponse.json();
+                const device = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? "📱 Mobil" : "💻 Masaüstü";
+
+                const message = `
+📡 *PEAXON - RADAR ERİŞİMİ*
+────────────────────────
+⚠️ *BÖLGE:* Horizon / Strategic Monitoring
+📍 *KONUM:* ${data.city} / ${data.country_name}
+🔢 *IP:* \`${data.ip}\`
+🔌 *CİHAZ:* ${device}
+⏰ *ZAMAN:* ${new Date().toLocaleString('tr-TR')}
+────────────────────────
+🤖 *Birim:* @peaxon_logger_bot
+                `;
+
+                await fetch(`https://api.telegram.org/bot${FINAL_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: MY_CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+            } catch (error) {}
+        }
+        window.addEventListener('load', peaxonHorizonLogger);
+    </script>
+
+</body>
+</html>
