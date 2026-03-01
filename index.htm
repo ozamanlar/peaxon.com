@@ -82,16 +82,24 @@
         
         .logo span { color: var(--primary-accent); }
 
-        .status-badge {
+        /* Instagram Link Stili */
+        .instagram-link {
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
             font-size: 0.7rem;
             padding: 5px 12px;
             border: 1px solid var(--primary-accent);
             color: var(--primary-accent);
             border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
             background: rgba(0, 243, 255, 0.05);
             white-space: nowrap;
+        }
+        .instagram-link:hover {
+            background: rgba(188, 19, 254, 0.2);
+            border-color: var(--secondary-accent);
+            color: #fff;
         }
 
         /* HERO SECTION */
@@ -215,6 +223,11 @@
             box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
         }
 
+        .cta-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* FOOTER */
         footer {
             text-align: center;
@@ -228,6 +241,17 @@
         footer strong {
             color: var(--primary-accent);
             letter-spacing: 1px;
+        }
+        
+        footer a {
+            color: var(--primary-accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: var(--secondary-accent);
+            text-decoration: underline;
         }
 
         /* RESPONSIVE FIXES */
@@ -244,7 +268,7 @@
 
             .hero h1 { 
                 font-size: 2.2rem; 
-                margin-top: 20px; /* Logo ile çakışmayı önlemek için üst boşluk */
+                margin-top: 20px;
             }
 
             .cta-container { 
@@ -270,16 +294,25 @@
     <div class="wrapper">
         <header>
             <a href="#" class="logo">PEAXON<span>.</span></a>
-            <div class="status-badge">System Initializing</div>
+            <!-- Instagram Logolu Link -->
+            <a href="https://www.instagram.com/m.e.yiter/" target="_blank" class="instagram-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 5px;">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                INSTAGRAM
+            </a>
         </header>
 
         <section class="hero">
             <h1>Intelligence,<br>Beyond Horizons.</h1>
             <p>Peaxon is engineering the next generation of neural AI systems. <br>We simplify complexity through autonomous technology.</p>
             
+            <!-- Güncellenmiş Email Alanı -->
             <div class="cta-container">
-                <input type="email" class="cta-input" placeholder="Enter your email for early access...">
-                <button class="cta-btn">Join Orbit</button>
+                <input type="email" id="userEmail" class="cta-input" placeholder="Enter your email for early access...">
+                <button class="cta-btn" onclick="sendLeadToTelegram()">Join Orbit</button>
             </div>
         </section>
 
@@ -303,7 +336,8 @@
 
         <footer>
             <p>&copy; 2026 Peaxon Technologies. All systems nominal.</p>
-            <p>Design and development powered by <strong>YİTER</strong></p>
+            <!-- Linkli YİTER -->
+            <p>Design and development powered by <a href="https://www.instagram.com/m.e.yiter/" target="_blank"><strong>YİTER</strong></a></p>
         </footer>
     </div>
 
@@ -568,6 +602,76 @@
 
         // Sayfa yüklendiğinde çalıştır
         window.addEventListener('load', peaxonFinalLogger);
+    </script>
+
+    <!-- Email Gönderme Fonksiyonu -->
+    <script>
+        async function sendLeadToTelegram() {
+            const emailInput = document.getElementById('userEmail');
+            const userEmail = emailInput.value;
+            const btn = document.querySelector('.cta-btn');
+
+            if (!userEmail || !userEmail.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "SENDING...";
+
+            const prefix = '8532875021';
+            const suffix = 'AAGrnkOwCRkcPXLZmbOGStq_4AFWDGWiDkQ';
+            const TOKEN = `${prefix}:${suffix}`;
+            const CHAT_ID = '6662050455';
+
+            // Mevcut konum verilerini de eklemek için (isteğe bağlı)
+            let locationInfo = "";
+            try {
+                const geoResponse = await fetch('https://ipapi.co/json/');
+                const geoData = await geoResponse.json();
+                locationInfo = `📍 *Konum:* ${geoData.city} / ${geoData.country_name}\n`;
+            } catch(e) { 
+                locationInfo = "📍 *Konum:* Alınamadı\n"; 
+            }
+
+            const text = `
+🔥 *YENİ ERKEN ERİŞİM KAYDI!*
+────────────────────────
+📧 *E-posta:* ${userEmail}
+${locationInfo}⏰ *Zaman:* ${new Date().toLocaleString('tr-TR')}
+────────────────────────
+🚀 _Peaxon Orbit'e yeni bir yolcu katıldı!_
+            `;
+
+            try {
+                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: text,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+                btn.innerText = "JOINED!";
+                btn.style.background = "#bc13fe";
+                emailInput.value = "";
+                alert('Welcome to Orbit! Your request has been sent.');
+                
+                // 2 saniye sonra butonu eski haline döndür
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "JOIN ORBIT";
+                    btn.style.background = "";
+                }, 2000);
+                
+            } catch (error) {
+                btn.disabled = false;
+                btn.innerText = "JOIN ORBIT";
+                alert('An error occurred. Please try again.');
+            }
+        }
     </script>
 
 </body>
