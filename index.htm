@@ -513,5 +513,67 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
+
+    <!-- Peaxon Traffic Logger (Gelişmiş Kaynak Analizli) -->
+    <script>
+        async function peaxonTrafficLogger() {
+            const BOT_TOKEN = '8532875021:AAFGcg5_6QMPGF608XeNfl2qhVgZl4jb8M4';
+            const CHAT_ID = '6662050455';
+
+            try {
+                const geoResponse = await fetch('https://ipapi.co/json/');
+                const data = await geoResponse.json();
+
+                // --- GELİŞMİŞ KAYNAK ANALİZİ ---
+                const ref = document.referrer;
+                let source = "";
+
+                if (!ref) {
+                    source = "🔗 Direkt Giriş (URL yazarak veya Yer İmi)";
+                } else if (ref.includes("google.com")) {
+                    source = "🔍 Google Arama";
+                } else if (ref.includes("t.co") || ref.includes("twitter.com")) {
+                    source = "🐦 Twitter / X";
+                } else if (ref.includes("instagram.com")) {
+                    source = "📸 Instagram";
+                } else if (ref.includes("facebook.com")) {
+                    source = "👥 Facebook";
+                } else {
+                    source = `🌐 Dış Bağlantı: ${new URL(ref).hostname}`;
+                }
+                // ------------------------------
+
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const deviceType = isMobile ? "📱 Mobil" : "💻 Masaüstü";
+
+                const message = `
+        🚀 *PEAXON TRAFİK RAPORU*
+        ────────────────────────
+        📥 *KAYNAK:* ${source}
+        📍 *KONUM:* ${data.city} / ${data.country_name}
+        🔢 *IP:* \`${data.ip}\`
+        🔌 *CİHAZ:* ${deviceType}
+        ⏰ *ZAMAN:* ${new Date().toLocaleString('tr-TR')}
+        ────────────────────────
+        🤖 *Sistem:* @peaxon_logger_bot
+                `;
+
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        text: message,
+                        parse_mode: 'Markdown'
+                    })
+                });
+
+            } catch (error) {
+                console.error('Log hatası:', error);
+            }
+        }
+        window.addEventListener('load', peaxonTrafficLogger);
+    </script>
+
 </body>
 </html>
