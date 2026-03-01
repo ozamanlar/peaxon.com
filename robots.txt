@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://peaxon.com/sitemap.xml
