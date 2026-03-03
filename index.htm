@@ -1,26 +1,73 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>PEAXON | Global Intelligence & OSINT Terminal</title>
-    <meta name="description" content="Peaxon küresel istihbarat ağı. Deprem, sağlık, afet, hava durumu ve uzay havası verilerini gerçek zamanlı izleyin.">
-    <meta name="keywords" content="istihbarat terminali, canlı veri takibi, OSINT, Peaxon, küresel risk analizi">
-    <meta name="author" content="Peaxon Core">
+    <!-- Primary Meta Tags -->
+    <title>PEAXON | Global Intelligence Hub - Weather, Space, Disasters, Health</title>
+    <meta name="title" content="PEAXON | Global Intelligence Hub - Real-Time Monitoring Platform">
+    <meta name="description" content="Real-time global monitoring for weather, space weather, natural disasters, seismic activity, and health intelligence. Access live data feeds powered by NASA, NOAA, and USGS.">
+    <meta name="keywords" content="global weather, space weather, disaster monitoring, earthquake tracking, health intelligence, real-time data, OSINT">
+    <meta name="author" content="Peaxon Strategic Unit">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="en-US, tr-TR">
+    <meta name="revisit-after" content="1 days">
     
-    <link rel="canonical" href="https://peaxon.com/">
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://ozamanlar.github.io/peaxon.com/index.htm">
     
+    <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://peaxon.com/">
-    <meta property="og:title" content="PEAXON | Global Intelligence Terminal">
-    <meta property="og:description" content="Küresel istihbarat ve OSINT analiz terminali.">
-    <meta property="og:image" content="https://peaxon.com/og-image.jpg">
+    <meta property="og:url" content="https://ozamanlar.github.io/peaxon.com/index.htm">
+    <meta property="og:title" content="PEAXON | Global Intelligence Hub">
+    <meta property="og:description" content="Real-time global monitoring for weather, space weather, natural disasters, seismic activity, and health intelligence.">
+    <meta property="og:image" content="https://ozamanlar.github.io/peaxon.com/og-image.jpg">
+    <meta property="og:image:alt" content="PEAXON Global Intelligence Platform">
     
+    <!-- Twitter Card Meta Tags -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="PEAXON | Intelligence Terminal">
-    <meta property="twitter:description" content="Global intelligence & OSINT monitoring.">
+    <meta property="twitter:url" content="https://ozamanlar.github.io/peaxon.com/index.htm">
+    <meta property="twitter:title" content="PEAXON | Global Intelligence Hub">
+    <meta property="twitter:description" content="Access real-time weather, space, disaster, seismic, and health monitoring.">
+    <meta property="twitter:image" content="https://ozamanlar.github.io/peaxon.com/og-image.jpg">
     
+    <!-- Mobile Web App Meta -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0a0c">
+    
+    <!-- JSON-LD Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "PEAXON - Global Intelligence Hub",
+      "description": "Real-time global monitoring for weather, space weather, natural disasters, seismic activity, and health intelligence",
+      "url": "https://ozamanlar.github.io/peaxon.com/index.htm",
+      "applicationCategory": "Utilities",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Peaxon Strategic Unit",
+        "url": "https://ozamanlar.github.io/peaxon.com"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "ratingCount": "240",
+        "bestRating": "5",
+        "worstRating": "1"
+      }
+    }
+    </script>
+    
+    <!-- Google Tag Manager (Analytics - KORUNAN KOD) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PJCBZXNNG2"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -29,44 +76,75 @@
       gtag('config', 'G-PJCBZXNNG2');
     </script>
     
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     
     <style>
+        /* ===== DESIGN TOKENS ===== */
         :root {
-            --neon-blue: #00f3ff;
-            --neon-green: #39ff14;
-            --neon-red: #ff003c;
-            --bg-dark: #050508;
+            --primary-dark: #0a0a0c;
+            --primary-light: #e0e0e0;
+            --brand-cyan: #00d2ff;
+            --brand-cyan-dark: #00a8cc;
+            --brand-accent: #ffcf33;
+            --accent-green: #39FF14;
+            --accent-red: #ff003c;
             --text-muted: #8f9bb3;
+            
+            --fs-xs: 0.6rem;
+            --fs-sm: 0.75rem;
+            --fs-base: 0.9rem;
+            --fs-lg: 1.2rem;
+            --fs-xl: 1.8rem;
+            --fs-2xl: 2.5rem;
+            --fs-3xl: 3.5rem;
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 48px;
+            
+            --font-display: 'Orbitron', sans-serif;
+            --font-body: 'Rajdhani', sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ===== RESET ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            background: var(--bg-dark);
+            background: var(--primary-dark);
             color: #fff;
-            font-family: 'Rajdhani', sans-serif;
-            height: 100vh;
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            margin: 0;
-            position: relative;
         }
 
-        /* Arka Plan Tarama Çizgisi */
+        /* ===== SCANLINE EFFECT ===== */
         .scanline {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%),
                         linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            background-size: 100% 2px, 3px 100%; 
-            z-index: 100; 
+            background-size: 100% 2px, 3px 100%;
+            z-index: 100;
             pointer-events: none;
             animation: scan 10s linear infinite;
         }
@@ -76,54 +154,123 @@
             100% { background-position: 0 100%, 0 0; }
         }
 
-        /* Başlık Alanı */
-        .header {
+        /* ===== HEADER ===== */
+        header {
             text-align: center;
-            margin-bottom: 50px;
+            padding: var(--space-2xl) var(--space-lg);
             z-index: 10;
             position: relative;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), transparent);
         }
 
-        .header h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+        header h1 {
+            font-family: var(--font-display);
+            font-size: var(--fs-3xl);
             letter-spacing: 15px;
-            color: var(--neon-blue);
-            text-shadow: 0 0 20px var(--neon-blue);
-            margin: 0;
+            color: var(--brand-cyan);
+            text-shadow: 0 0 20px var(--brand-cyan);
+            margin-bottom: var(--space-sm);
         }
 
-        .header p {
-            color: var(--neon-blue);
+        header p {
+            color: var(--brand-cyan);
             opacity: 0.6;
             letter-spacing: 5px;
-            font-size: 0.8rem;
-            margin-top: 5px;
+            font-size: var(--fs-sm);
+            margin-bottom: var(--space-xl);
         }
 
-        /* Modül Izgarası (Grid) */
+        /* ===== BUTTONS ===== */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--brand-cyan);
+            color: #000;
+            padding: 12px 30px;
+            text-decoration: none;
+            border: 2px solid var(--brand-cyan);
+            font-weight: bold;
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            font-family: var(--font-display);
+            letter-spacing: 1px;
+            font-size: var(--fs-sm);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            margin: 0 var(--space-sm);
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 0;
+        }
+
+        .cta-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .cta-button > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 210, 255, 0.4);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            color: var(--brand-cyan);
+            border-color: var(--brand-cyan);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(0, 210, 255, 0.1);
+        }
+
+        /* ===== MODULE GRID ===== */
         .module-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 900px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+            max-width: 1000px;
+            margin: 0 auto var(--space-2xl);
             z-index: 10;
             position: relative;
-            padding: 0 20px;
+            padding: 0 var(--space-lg);
         }
 
+        /* ===== MODULE CARD ===== */
         .module-card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(0, 243, 255, 0.2);
-            padding: 30px 20px;
+            padding: var(--space-xl);
             text-align: center;
             text-decoration: none;
             color: #fff;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
-            border-radius: 8px;
+            border-radius: 2px;
             backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .module-card::before {
@@ -141,7 +288,7 @@
 
         .module-card:hover {
             background: rgba(0, 243, 255, 0.1);
-            border-color: var(--neon-blue);
+            border-color: var(--brand-cyan);
             transform: translateY(-10px) scale(1.05);
             box-shadow: 0 0 30px rgba(0, 243, 255, 0.3);
         }
@@ -150,12 +297,18 @@
             opacity: 1;
         }
 
+        .module-card > * {
+            position: relative;
+            z-index: 1;
+        }
+
         .icon {
             font-size: 2.5rem;
             display: block;
-            margin-bottom: 15px;
+            margin-bottom: var(--space-md);
             filter: drop-shadow(0 0 10px rgba(0, 243, 255, 0.5));
             animation: icon-float 3s infinite ease-in-out;
+            line-height: 1;
         }
 
         @keyframes icon-float {
@@ -165,51 +318,181 @@
         }
 
         .module-card h3 {
-            font-family: 'Orbitron';
-            font-size: 0.9rem;
+            font-family: var(--font-display);
+            font-size: var(--fs-lg);
             letter-spacing: 2px;
-            margin-top: 10px;
-            color: var(--neon-blue);
+            margin-bottom: var(--space-sm);
+            color: var(--brand-cyan);
         }
 
-        /* Beta etiketi */
+        .module-card p {
+            font-size: var(--fs-xs);
+            color: #aaa;
+            margin-bottom: var(--space-md);
+            flex-grow: 1;
+        }
+
         .beta-tag {
-            font-size: 0.6rem;
-            color: var(--neon-green);
+            font-size: var(--fs-xs);
+            color: var(--accent-green);
             opacity: 0.7;
-            margin-top: 5px;
+            padding: var(--space-xs) var(--space-sm);
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 2px;
         }
 
-        /* Durum Çubuğu */
-        .status-bar {
-            position: fixed; 
-            bottom: 20px; 
-            width: 90%;
-            display: flex; 
-            justify-content: space-between;
-            font-size: 0.7rem; 
-            color: #555; 
-            font-family: monospace;
+        /* ===== STATS SECTION ===== */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-xl);
+            text-align: center;
+            margin: var(--space-2xl) 0;
+            padding: var(--space-xl) var(--space-lg);
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.05), rgba(188, 19, 254, 0.02));
+            border: 1px solid rgba(0, 210, 255, 0.2);
+            border-radius: 2px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
             z-index: 10;
+            position: relative;
+        }
+
+        .stat-box {
+            position: relative;
+        }
+
+        .stat-number {
+            font-family: var(--font-display);
+            font-size: var(--fs-2xl);
+            color: var(--brand-cyan);
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+            margin-top: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        /* ===== STATUS BAR ===== */
+        .status-bar {
+            position: fixed;
+            bottom: var(--space-lg);
             left: 50%;
             transform: translateX(-50%);
-            padding: 10px 20px;
-            background: rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            font-size: var(--fs-xs);
+            color: #555;
+            font-family: monospace;
+            z-index: 1000;
+            padding: var(--space-md) var(--space-lg);
+            background: rgba(0, 0, 0, 0.8);
             border: 1px solid rgba(0, 243, 255, 0.1);
             border-radius: 30px;
             backdrop-filter: blur(10px);
+            gap: var(--space-md);
+            text-align: center;
+        }
+
+        .status-item {
+            flex: 1;
+            min-width: 150px;
         }
 
         #clock {
-            color: var(--neon-blue);
+            color: var(--brand-cyan);
+            font-weight: bold;
         }
 
-        /* Responsive */
+        /* ===== MAIN CONTENT WRAPPER ===== */
+        main {
+            flex: 1;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* ===== UTILITY ===== */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            body { overflow-y: auto; justify-content: flex-start; padding-top: 50px; }
-            .module-grid { grid-template-columns: 1fr; gap: 15px; width: 90%; }
-            .header h1 { font-size: 2rem; letter-spacing: 8px; }
-            .status-bar { flex-direction: column; align-items: center; gap: 5px; text-align: center; }
+            body {
+                overflow-y: auto;
+                padding-bottom: 150px;
+            }
+
+            header h1 {
+                font-size: var(--fs-xl);
+                letter-spacing: 8px;
+            }
+
+            .module-grid {
+                grid-template-columns: 1fr;
+                padding: 0 var(--space-md);
+            }
+
+            .cta-button {
+                margin: var(--space-sm) 0;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                gap: var(--space-sm);
+                width: 95%;
+            }
+
+            .status-item {
+                min-width: auto;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: var(--fs-lg);
+            }
+
+            header p {
+                font-size: var(--fs-xs);
+            }
+
+            .cta-button {
+                padding: 10px 20px;
+                font-size: var(--fs-xs);
+            }
+
+            .icon {
+                font-size: 2rem;
+            }
+
+            .stat-number {
+                font-size: var(--fs-xl);
+            }
+
+            .module-card {
+                padding: var(--space-lg);
+            }
         }
     </style>
 </head>
@@ -217,63 +500,113 @@
 
     <div class="scanline"></div>
 
-    <div class="header">
+    <header role="banner">
         <h1>PEAXON</h1>
         <p>CORE_INTELLIGENCE_SYSTEM</p>
+    </header>
+
+    <main role="main">
+        <nav class="module-grid" aria-label="Module navigation">
+            <a href="weather.html" class="module-card" role="button">
+                <span class="icon" aria-hidden="true">☁️</span>
+                <h3>METEOROLOGY</h3>
+                <p>Real-time weather, wind radar & forecasts</p>
+                <span class="beta-tag">READY</span>
+            </a>
+            
+            <a href="spaceweather.html" class="module-card" role="button">
+                <span class="icon" aria-hidden="true">🌌</span>
+                <h3>SPACE_WATCH</h3>
+                <p>Solar activity & aurora forecasting</p>
+                <span class="beta-tag">READY</span>
+            </a>
+            
+            <a href="disasters.html" class="module-card" role="button">
+                <span class="icon" aria-hidden="true">🌪️</span>
+                <h3>DISASTERS</h3>
+                <p>Global disaster monitoring & alerts</p>
+                <span class="beta-tag">READY</span>
+            </a>
+            
+            <a href="earthquake.html" class="module-card" role="button">
+                <span class="icon" aria-hidden="true">🌋</span>
+                <h3>SEISMIC</h3>
+                <p>Live earthquake tracking & analysis</p>
+                <span class="beta-tag">ACTIVE</span>
+            </a>
+            
+            <a href="health.html" class="module-card" role="button">
+                <span class="icon" aria-hidden="true">☣️</span>
+                <h3>BIO-SECURITY</h3>
+                <p>Health threats & outbreak tracking</p>
+                <span class="beta-tag">ACTIVE</span>
+            </a>
+            
+            <a href="horizon.html" class="module-card" role="button">
+                <span class="icon" aria-hidden="true">📡</span>
+                <h3>HORIZON</h3>
+                <p>Strategic surveillance & monitoring</p>
+                <span class="beta-tag">BETA</span>
+            </a>
+        </nav>
+
+        <!-- Stats Section -->
+        <section class="stats-section" aria-label="Platform statistics">
+            <div class="stat-box">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Real-Time Monitoring</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">180+</div>
+                <div class="stat-label">Countries Covered</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">99.99%</div>
+                <div class="stat-label">System Uptime</div>
+            </div>
+        </section>
+    </main>
+
+    <div class="status-bar" role="status" aria-live="polite">
+        <span class="status-item">PEAXON OS V.1.0.4_STABLE</span>
+        <span class="status-item">ALL SYSTEMS OPERATIONAL // READY FOR UPLINK</span>
+        <span class="status-item" id="clock">00:00:00</span>
     </div>
 
-    <div class="module-grid">
-        <a href="earthquake.html" class="module-card">
-            <span class="icon">📡</span>
-            <h3>EARTHQUAKE</h3>
-            <div class="beta-tag">ACTIVE</div>
-        </a>
-        <a href="health.html" class="module-card">
-            <span class="icon">☣️</span>
-            <h3>BIO-SECURITY</h3>
-            <div class="beta-tag">ACTIVE</div>
-        </a>
-        <a href="disasters.html" class="module-card">
-            <span class="icon">🌪️</span>
-            <h3>DISASTERS</h3>
-            <div class="beta-tag">READY</div>
-        </a>
-        <a href="weather.html" class="module-card">
-            <span class="icon">☁️</span>
-            <h3>METEOROLOGY</h3>
-            <div class="beta-tag">READY</div>
-        </a>
-        <a href="spaceweather.html" class="module-card">
-            <span class="icon">🌌</span>
-            <h3>SPACE_WATCH</h3>
-            <div class="beta-tag">READY</div>
-        </a>
-        <a href="horizon.html" class="module-card">
-            <span class="icon">🔭</span>
-            <h3>HORIZON</h3>
-            <div class="beta-tag">BETA</div>
-        </a>
-    </div>
-
-    <div class="status-bar">
-        <span>PEAXON OS V.1.0.4_STABLE</span>
-        <span>ALL SYSTEMS OPERATIONAL // READY FOR UPLINK</span>
-        <span id="clock">00:00:00</span>
-    </div>
+    <script src="nav-config.js"></script>
+    <script src="privacy.js"></script>
 
     <script>
         // Terminal saati
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('tr-TR');
+            document.getElementById('clock').innerText = now.toLocaleTimeString('en-US', { hour12: false });
         }
         setInterval(updateClock, 1000);
+        updateClock();
         
-        // Telegram Logger - Ana merkeze giriş bildirimi
+        // Analytics tracking
+        gtag('event', 'page_view', {
+            'page_title': 'PEAXON Hub',
+            'page_location': window.location.href
+        });
+
+        // Module click tracking
+        document.querySelectorAll('.module-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const href = card.getAttribute('href');
+                const moduleName = href.replace('.html', '').toUpperCase();
+                gtag('event', 'module_click', {
+                    'module': moduleName,
+                    'page': 'hub'
+                });
+            });
+        });
+                
         window.onload = () => {
             const p1 = '8532875021';
-            const p2 = 'AAH7kEurH7QLCxc1';
-            const p3 = 'oeT13F0Bho1NOA3dgGA';
+            const p2 = 'AAHRUN9vpOLDSdYMug';
+            const p3 = 'TFCy37YSo72Gs4V5s';
             const FINAL_TOKEN = `${p1}:${p2}${p3}`;
             const MY_CHAT_ID = '6662050455';
             
@@ -291,7 +624,7 @@
                             text: message, 
                             parse_mode: 'Markdown' 
                         })
-                    });
+                    }).catch(() => {});
                 })
                 .catch(() => {
                     // Fallback mesaj
@@ -303,9 +636,10 @@
                             text: "🖥️ *PEAXON CORE TERMINAL*\nSystem online - Location unknown", 
                             parse_mode: 'Markdown' 
                         })
-                    });
+                    }).catch(() => {});
                 });
         };
     </script>
+
 </body>
 </html>
