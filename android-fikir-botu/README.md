@@ -20,6 +20,8 @@ Telegram'a gönderen otomasyon.
    - GitHub repo → Settings → Secrets and variables → Actions → New repository secret
    - `TELEGRAM_BOT_TOKEN` → bot token'ı
    - `TELEGRAM_CHAT_ID` → chat id'yi
+   - `GROQ_API_KEY` → (opsiyonel ama önerilir) console.groq.com üzerinden ücretsiz alınan API key.
+     Bu key olmadan da script çalışır, sadece ham liste gönderir (skor/yorum olmadan).
 
 5. Workflow otomatik olarak her gün 07:00 (İstanbul saati) çalışır.
    İstersen Actions sekmesinden "Run workflow" ile elle de tetikleyebilirsin.
@@ -38,5 +40,11 @@ Telegram'a gönderen otomasyon.
   rate limit'e takılmamak için istekler arasında 1 saniye bekletiliyor.
 - GitHub tarafı `secrets.GITHUB_TOKEN` (Actions'ın otomatik sağladığı token)
   ile çalışır, ekstra bir şey yapmana gerek yok.
-- Günlük çalıştığı için sadece son 24 saatteki içerikleri tarar
-  (`t=day` ve `created:>=` filtreleri bu yüzden var).
+- Reddit tarafı son 1 haftayı tarar (`t=week`), GitHub tarafı son 1 günü
+  tarar (`created:>=`). Reddit'te günlük pencere çoğu zaman boş sonuç
+  verdiği için haftalık tutuldu — günlük çalıştığında tekrar eden sonuçlar
+  görebilirsin, bu normaldir.
+- `GROQ_API_KEY` tanımlıysa, toplanan ham sonuçlar Groq'a (llama-3.3-70b)
+  gönderilip senin "minimum zaman/maliyet, niş problem" kriterine göre
+  1-10 puanlanır ve `MIN_FIT_SCORE` (varsayılan 6) altındakiler elenir.
+  Groq ücretsiz kotasını console.groq.com üzerinden görebilirsin.
