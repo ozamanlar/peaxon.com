@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Android proje fikri tarayıcı.
+Android + iOS proje fikri tarayıcı.
 Reddit ve GitHub'dan "yapılmamış uygulama fikri" sinyallerini toplayıp
 Telegram'a günlük özet olarak gönderir.
 
@@ -9,6 +9,12 @@ Gerekli ortam değişkenleri (GitHub Actions secrets olarak eklenecek):
   TELEGRAM_CHAT_ID
   GH_TOKEN     (opsiyonel ama önerilir - GitHub arama rate limitini artırır)
   GROQ_API_KEY (opsiyonel - varsa sonuçlar Groq ile değerlendirilip filtrelenir)
+
+Not: Reddit tarafı resmi API yerine genel (auth gerektirmeyen) arama
+endpoint'ini kullanır - ekstra secret gerekmez, ama Reddit tarafında
+rate limit veya format değişikliği olursa kırılabilir.
+
+Bağımlılıklar: requests
 """
 
 import os
@@ -20,13 +26,19 @@ import requests
 # Ayarlar
 # ---------------------------------------------------------------------------
 
-SUBREDDITS = [
-    "androidapps",
-    "AppIdeas",
-    "SomebodyMakeThis",
-    "SideProject",
-    "androiddev",
-]
+# Platform etiketli subreddit listesi - hangi kaynağın hangi platforma
+# ait olduğunu Groq değerlendirmesine taşımak için ayrı tutuluyor.
+SUBREDDITS = {
+    "androidapps": "android",
+    "AppIdeas": "both",
+    "SomebodyMakeThis": "both",
+    "SideProject": "both",
+    "androiddev": "android",
+    "iOSProgramming": "ios",
+    "apple": "ios",
+    "iOSthemes": "ios",
+    "SwiftUI": "ios",
+}
 
 # Reddit'te aratılacak kalıplar - ihtiyaç/talep ifade eden cümle kalıpları
 REDDIT_PHRASES = [
@@ -38,15 +50,17 @@ REDDIT_PHRASES = [
     "looking for an app that",
 ]
 
-# GitHub arama sorguları - Android/Kotlin ekosisteminde tekrarlanan
-# feature request / boşluk sinyalleri
+# GitHub arama sorguları - platform etiketiyle birlikte. Android/Kotlin ve
+# iOS/Swift ekosistemlerinde tekrarlanan feature request / boşluk sinyalleri.
 GITHUB_QUERIES = [
-    'language:Kotlin "feature request" in:title,body android',
-    'topic:android-app "please add" in:body',
+    ('language:Kotlin "feature request" in:title,body android', "android"),
+    ('topic:android-app "please add" in:body', "android"),
+    ('language:Swift "feature request" in:title,body ios', "ios"),
+    ('topic:ios-app "please add" in:body', "ios"),
 ]
 
 TELEGRAM_API = "https://api.telegram.org/bot{token}/sendMessage"
-REDDIT_HEADERS = {"User-Agent": "android-fikir-botu/1.0"}
+REDDIT_HEADERS = {"User-Agent": "android-ios-fikir-botu/1.0"}
 GITHUB_HEADERS = {"Accept": "application/vnd.github+json"}
 
 MIN_UPVOTES = 2          # Reddit gönderisi için minimum oy eşiği
@@ -67,11 +81,11 @@ if gh_token:
 # ---------------------------------------------------------------------------
 
 def fetch_reddit_hits():
-    """Belirlenen subredditlerde, son 1 gün içinde, belirlenen kalıpları
+    """Belirlenen subredditlerde, son 1 hafta içinde, belirlenen kalıpları
     içeren gönderileri arar. Reddit'in genel (auth gerektirmeyen) arama
     JSON endpoint'ini kullanır."""
     hits = []
-    for sub in SUBREDDITS:
+    for sub, platform in SUBREDDITS.items():
         for phrase in REDDIT_PHRASES:
             url = f"https://www.reddit.com/r/{sub}/search.json"
             params = {
@@ -99,6 +113,7 @@ def fetch_reddit_hits():
                     "title": post.get("title", "").strip(),
                     "url": "https://reddit.com" + post.get("permalink", ""),
                     "subreddit": sub,
+                    "platform": platform,
                     "score": ups + comments * 2,  # yorum ağırlıklı skor
                 })
             time.sleep(1)  # Reddit'e nazik davran
@@ -120,7 +135,7 @@ def fetch_github_hits():
     ekosisteminde 'feature request' / boşluk sinyali veren issue'ları arar."""
     hits = []
     since = "created:>=" + time.strftime("%Y-%m-%d", time.gmtime(time.time() - 86400))
-    for query in GITHUB_QUERIES:
+    for query, platform in GITHUB_QUERIES:
         url = "https://api.github.com/search/issues"
         params = {"q": f"{query} {since}", "sort": "reactions", "order": "desc", "per_page": 10}
         try:
@@ -136,6 +151,7 @@ def fetch_github_hits():
                 "title": item.get("title", "").strip(),
                 "url": item.get("html_url", ""),
                 "repo": item.get("repository_url", "").split("/")[-1],
+                "platform": platform,
                 "score": item.get("reactions", {}).get("total_count", 0) + item.get("comments", 0),
             })
         time.sleep(1)
@@ -151,20 +167,42 @@ def fetch_github_hits():
 # Groq ile değerlendirme (opsiyonel katman)
 # ---------------------------------------------------------------------------
 
-EVAL_SYSTEM_PROMPT = """Sen bir Android bağımsız geliştirici danışmanısın.
-Kullanıcının kriteri: minimum zaman, minimum maliyet, maksimum gelir.
-Yani tek kişilik, hızlı yapılabilen, niş bir problemi çözen, büyük altyapı
-gerektirmeyen Android uygulama fikirlerini arıyor. Büyük açık kaynak
-projelerine yapılan teknik feature request'ler (bir kütüphaneye özellik
-eklemek gibi) onun için değerli DEĞİLDİR - sadece bağımsız bir uygulama
-fikrine dönüşebilecek sinyaller değerlidir.
+EVAL_SYSTEM_PROMPT = """Sen bir bağımsız (solo) Android + iOS geliştirici
+danışmanısın. Değerlendirdiğin kişinin gerçek kısıtları şunlar:
 
-Sana bir liste JSON gönderilecek. Her öğe için:
-- fit_score: 1-10 arası, kullanıcının kriterine ne kadar uyduğu (10 = mükemmel bağımsız app fikri)
-- yorum: tek cümlelik Türkçe değerlendirme (neden uygun/değil, varsa rakip durumu)
+- Solo geliştirici, yan proje olarak çalışıyor, tam zamanlı değil.
+- Bütçesi sınırlı, dış yatırım/fonlama yok.
+- Şirket KURAMIYOR (kamu görevlisi statüsü nedeniyle). B2B satış, kurumsal
+  sözleşme, doğrudan fatura kesme gerektiren gelir modelleri PRATİKTE
+  KAPALI - böyle bir fikre yüksek puan verme, gerekçede belirt.
+- Haftalık ayırabildiği geliştirme zamanı kısıtlı ve azalıyor; sürekli
+  bakım, çoklu cihaz/OS testi veya sık model güncellemesi gerektiren
+  fikirler dezavantajlı sayılmalı.
+- Felsefe: minimum zaman, minimum maliyet, maksimum gelir - B2C, niş,
+  düşük bakımlı, hızlı yapılabilen fikirler tercih ediliyor.
+- Var olan kitleler: adli bilişim (Türkçe içerik), finans/SEO içerik,
+  İngilizce faceless YouTube kanalları. Yeni fikir bu kitlelerden biriyle
+  örtüşüyorsa puanı artır ve bunu yorumda belirt.
+
+Büyük açık kaynak projelerine yapılan teknik feature request'ler (bir
+kütüphaneye özellik eklemek gibi) değerli DEĞİLDİR - sadece bağımsız bir
+uygulama fikrine dönüşebilecek sinyaller değerlidir.
+
+Her öğenin bir "platform" alanı olacak: "android", "ios" veya "both".
+Bu alanı referans al ama gerekirse düzelt (ör. konu aslında sadece iOS'a
+özgüyse "ios" olarak değiştir). iOS fikirlerinde Apple Developer Program
+yıllık ücreti, App Store review süreci ve TestFlight sürtünmesini de
+gerçekçilik değerlendirmesine kat.
+
+Sana bir liste JSON gönderilecek. Her öğe için şunu döndür:
+- fit_score: 1-10 arası, YUKARIDAKİ KISITLARA göre gerçekçi uygunluk
+  (10 = mükemmel, düşük bakımlı, B2C, solo yapılabilir bağımsız app fikri)
+- platform: "android", "ios" veya "both" (gerekirse düzeltilmiş hâliyle)
+- yorum: tek-iki cümlelik Türkçe değerlendirme (neden uygun/değil, B2B
+  riski varsa belirt, rakip durumu, kitle örtüşmesi varsa belirt)
 
 SADECE aşağıdaki formatta bir JSON array döndür, başka hiçbir açıklama ekleme:
-[{"url": "...", "fit_score": 0, "yorum": "..."}, ...]
+[{"url": "...", "fit_score": 0, "platform": "...", "yorum": "..."}, ...]
 """
 
 
@@ -176,7 +214,10 @@ def evaluate_with_groq(items):
     if not api_key or not items:
         return items
 
-    payload_items = [{"url": it["url"], "title": it["title"]} for it in items]
+    payload_items = [
+        {"url": it["url"], "title": it["title"], "platform": it.get("platform", "both")}
+        for it in items
+    ]
 
     try:
         resp = requests.post(
@@ -209,6 +250,7 @@ def evaluate_with_groq(items):
             continue
         it = dict(it)
         it["fit_score"] = ev.get("fit_score")
+        it["platform"] = ev.get("platform", it.get("platform", "both"))
         it["yorum"] = ev.get("yorum", "")
         enriched.append(it)
 
@@ -220,15 +262,19 @@ def evaluate_with_groq(items):
 # Telegram gönderimi
 # ---------------------------------------------------------------------------
 
+PLATFORM_ICONS = {"android": "🤖", "ios": "🍎", "both": "🤖🍎"}
+
+
 def _format_item(h, source_label):
-    line = f"• [{h['title']}]({h['url']}) — {source_label}"
+    icon = PLATFORM_ICONS.get(h.get("platform", "both"), "")
+    line = f"• {icon} [{h['title']}]({h['url']}) — {source_label}"
     if "fit_score" in h:
         line += f"\n   ⭐ {h['fit_score']}/10 — {h['yorum']}"
     return line
 
 
 def format_message(reddit_hits, github_hits):
-    lines = ["📱 *Günlük Android Fikir Taraması*", ""]
+    lines = ["📱 *Günlük Android + iOS Fikir Taraması*", ""]
 
     lines.append("🔴 *Reddit*")
     if reddit_hits:
